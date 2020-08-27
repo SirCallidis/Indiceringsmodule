@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="Indiceringsmodule.WPFViews.IndiceringsmoduleTestView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Indiceringsmodule.WPFViews"
+             xmlns:common="clr-namespace:Indiceringsmodule.Common;assembly=Indiceringsmodule.Common"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <Button Content="Clear Left Document" Command="{Binding Button_ClearLeft}" Margin="2"/>
+            <Button Content="Add text with link" Command="{Binding Button_Click}" Margin="2"/>
+            <Button Content="TestButton" Click="TestButton_Click" Margin="2"/>
+            <Button Content="Set Right Cont. to Left" Click="HeaveContentButton_Click" Margin="2"/>
+            <Button Content="Find Images" Click="FindImagesButton_Click" Margin="2"/>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="2" Grid.Column="1">
+
+            <RichTextBox x:Name="richTB" IsDocumentEnabled="True" common:RichTextBoxHelper.DocumentXaml="{Binding EditableDocument, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+        <FlowDocumentReader x:Name="fDocReader" Document="{Binding CurrentDocument}" Grid.Column="0" Grid.Row="2" Margin="5" Background="White"/>
+        
+    </Grid>
+</UserControl>

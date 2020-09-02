@@ -32,7 +32,6 @@ namespace Indiceringsmodule.WPFViews
         public IndiceringsmoduleTestView()
         {
             InitializeComponent();
-            
 
             //TODO - below: breaks because constructor hasn't finished yet => after finish it sets the datacontext in markup
             //solution: on-startup method, like in charcreator

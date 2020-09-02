@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Indiceringsmodule.UnitTests", "Indiceringsmodule.UnitTests\Indiceringsmodule.UnitTests.csproj", "{4B2FFE65-E107-43CF-BBB4-774FA55E51F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Indiceringsmodule.Language", "Indiceringsmodule.Language\Indiceringsmodule.Language.csproj", "{5AC1383F-CE3D-44F6-842A-1CF938C32233}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{4B2FFE65-E107-43CF-BBB4-774FA55E51F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B2FFE65-E107-43CF-BBB4-774FA55E51F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B2FFE65-E107-43CF-BBB4-774FA55E51F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AC1383F-CE3D-44F6-842A-1CF938C32233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AC1383F-CE3D-44F6-842A-1CF938C32233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AC1383F-CE3D-44F6-842A-1CF938C32233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AC1383F-CE3D-44F6-842A-1CF938C32233}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,6 +77,7 @@ Global
 		{F449EC85-C9FF-499F-8368-2A5893BDE537} = {74E541D1-F6E8-4F89-B60E-82EB5C90595F}
 		{8FEEEB6D-6EC6-4A6C-AD3A-7A32B48BD604} = {9023CD33-8977-43A8-BF27-A89C5279658E}
 		{4B2FFE65-E107-43CF-BBB4-774FA55E51F9} = {3C9DB328-2C7F-468D-8120-56BDC3FB03DF}
+		{5AC1383F-CE3D-44F6-842A-1CF938C32233} = {4E38B3A1-454D-4121-83FA-A5788FE74BE0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F7BE1FB6-ED1B-4CEF-8A1B-D7A73C79C087}

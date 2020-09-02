@@ -48,10 +48,14 @@
     <Compile Include="EventAggregator.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventModels\ButtonClickEventModel.cs" />
+    <Compile Include="EventModels\ClosePopUpEventModel.cs" />
     <Compile Include="EventModels\DocumentLoadedEventModel.cs" />
+    <Compile Include="EventModels\LanguageChangedEventModel.cs" />
     <Compile Include="EventModels\MessageObjectModel.cs" />
+    <Compile Include="EventModels\ProvidingViewForViewModelEventModel.cs" />
     <Compile Include="EventModels\RequestDocumentForSavingEventModel.cs" />
     <Compile Include="EventModels\PublishDocumentEventModel.cs" />
+    <Compile Include="EventModels\RequestViewForViewModelEventModel.cs" />
     <Compile Include="EventRaiser.cs" />
     <Compile Include="Interfaces\IDocumentReader.cs" />
     <Compile Include="Interfaces\IEventAggregator.cs" />

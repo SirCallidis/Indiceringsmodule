@@ -67,6 +67,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="UserControls\PopUpOptions.xaml.cs">
+      <DependentUpon>PopUpOptions.xaml</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -85,6 +88,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UserControls\PopUpOptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Indiceringsmodule.Common\Indiceringsmodule.Common.csproj">
@@ -94,6 +101,10 @@
     <ProjectReference Include="..\Indiceringsmodule.DataAccess\Indiceringsmodule.DataAccess.csproj">
       <Project>{8feeeb6d-6ec6-4a6c-ad3a-7a32b48bd604}</Project>
       <Name>Indiceringsmodule.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Indiceringsmodule.Language\Indiceringsmodule.Language.csproj">
+      <Project>{5ac1383f-ce3d-44f6-842a-1cf938c32233}</Project>
+      <Name>Indiceringsmodule.Language</Name>
     </ProjectReference>
     <ProjectReference Include="..\Indiceringsmodule.Presentation\Indiceringsmodule.Presentation.csproj">
       <Project>{156a2e6a-d6bf-48d5-bdfa-bd7189d9a8a3}</Project>

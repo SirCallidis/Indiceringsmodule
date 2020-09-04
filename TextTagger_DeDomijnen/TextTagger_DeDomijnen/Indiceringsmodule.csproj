@@ -59,6 +59,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ViewModelCoupler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -95,6 +96,10 @@
     <ProjectReference Include="..\Indiceringsmodule.DataAccess\Indiceringsmodule.DataAccess.csproj">
       <Project>{8feeeb6d-6ec6-4a6c-ad3a-7a32b48bd604}</Project>
       <Name>Indiceringsmodule.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Indiceringsmodule.Language\Indiceringsmodule.Language.csproj">
+      <Project>{5ac1383f-ce3d-44f6-842a-1cf938c32233}</Project>
+      <Name>Indiceringsmodule.Language</Name>
     </ProjectReference>
     <ProjectReference Include="..\Indiceringsmodule.Presentation\Indiceringsmodule.Presentation.csproj">
       <Project>{156a2e6a-d6bf-48d5-bdfa-bd7189d9a8a3}</Project>

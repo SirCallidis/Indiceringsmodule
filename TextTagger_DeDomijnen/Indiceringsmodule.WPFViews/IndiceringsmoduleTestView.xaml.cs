@@ -26,12 +26,20 @@ namespace Indiceringsmodule.WPFViews
     public partial class IndiceringsmoduleTestView : UserControl
     {
         // TODO - clean up this code-behind
-        private protected EventAggregator ea;
 
+        #region Fields & Properties
+            
+        private protected EventAggregator Ea;
+
+        #endregion
+
+        #region Default Constructor
 
         public IndiceringsmoduleTestView()
         {
             InitializeComponent();
+            DataObject.AddPastingHandler(this, OnPaste);
+            SetRichTBTextSettings();
 
             //TODO - below: breaks because constructor hasn't finished yet => after finish it sets the datacontext in markup
             //solution: on-startup method, like in charcreator
@@ -39,10 +47,66 @@ namespace Indiceringsmodule.WPFViews
             //this.ea = dCon.ea;
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Takes the text as strings from each Block in the
+        /// richTB.Document, Concatonates these to a single string
+        /// while saving line endings.
+        /// Then wipes the Blocks and creates a new, single
+        /// Block and Paragraph with the new large string in it.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PutAllTextInOneBlockButton_Click(object sender, RoutedEventArgs e)
+        {
+            var doc = richTB.Document;
+            if (doc == null) throw new ArgumentNullException("Document cannot be null!");
+
+            var blockCount = doc.Blocks.Count();
+
+            var strings = new string[blockCount];
+
+            var i = 0;
+            foreach (var block in doc.Blocks)
+            {
+                var range = new TextRange(block.ContentStart, block.ContentEnd);
+                var text = range.Text;
+                var line = text + "\r\n";
+                strings[i] = line;
+                i++;
+            }
+            var totalString = string.Concat(strings);
+            doc.Blocks.Clear();
+            doc.Blocks.Add(new Paragraph(new Run(totalString)));
+
+            SetRichTBTextSettings();
+            
+        }
+
+        private void SetRichTBTextSettings()
+        {
+            var doc = richTB.Document;
+            if (doc == null) throw new ArgumentNullException("Document cannot be null!");
+
+            doc.FontWeight = FontWeights.Normal;
+            doc.FontSize = 14;
+            doc.FontFamily = new FontFamily("Segoe");
+        }
+
+        #endregion
+
+
+        /// <summary>
+        /// may no longer be needed. see ViewModelCoupler
+        /// </summary>
         public void SetEaOnViewLoaded()
         {
+            //no way to call method. Next attempt: use ViewModelCoupler in App.xaml
             var dCon = DataContext as IndiceringsmoduleTestViewModel;
-            this.ea = dCon.ea;
+            Ea = dCon.Ea;
         }
 
 
@@ -79,10 +143,53 @@ namespace Indiceringsmodule.WPFViews
 
             doc.Blocks.Add(par);
 
+            
+
 
             //var reader = new ServiceReaderJSON();
             //reader.SaveDocument(doc, "invalid");
         }
+
+
+        /// <summary>
+        /// Standard logic for a paste action.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnPaste_Default(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(string)))
+            {
+                var text = (string)e.DataObject.GetData(typeof(string));
+                var composition = new TextComposition(InputManager.Current, this, text);
+                TextCompositionManager.StartComposition(composition);
+            }
+            //should the above need to be canceled, use e.CancelCommand
+            //e.CancelCommand();
+
+
+            //below: test what happened inside RichTB
+            var x = richTB.Document;
+            Clipboard.GetText();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnPaste(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(string)))
+            {
+                var text = Clipboard.GetText();
+                var composition = new TextComposition(InputManager.Current, this, text);
+                TextCompositionManager.StartComposition(composition);
+            }
+            //should the above need to be canceled, use e.CancelCommand
+            //e.CancelCommand(); 
+        }
+
 
         private void HLink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
@@ -191,5 +298,45 @@ namespace Indiceringsmodule.WPFViews
             throw new InvalidOperationException("Unknown block type: " + block.GetType());
         }
 
+        private void GetRichTextBoxSpecsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var doc = richTB.Document;
+            var numberOfBlocks = doc.Blocks.Count();
+            var content = new TextRange(doc.ContentStart, doc.ContentEnd).Text;
+
+            //below: works :D sets all content to bold
+            //doc.FontWeight = FontWeights.Bold;
+        }
+
+        
+
+        private void richTB_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                //this...
+                //richTB.AppendText("\r\n");
+                e.Handled = true;
+
+                ////...may already do all this
+                //var content = new TextRange(richTB.Document.ContentStart, richTB.Document.ContentEnd).Text;
+                //var newContent = String.Concat(content, "\r\n");
+                //richTB.Document.Blocks.Clear();
+                //richTB.Document.Blocks.Add(new Paragraph(new Run(newContent)));
+            }
+        }
+
+        private void richTB_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            var selection = richTB.Selection;
+            if(selection.IsEmpty == false)
+            {
+                CreateObjectButton.IsEnabled = true;
+            }
+            else
+            {
+                CreateObjectButton.IsEnabled = false;
+            }
+        }
     }
 }

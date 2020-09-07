@@ -67,6 +67,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="UserControls\EditDocSettings.xaml.cs">
+      <DependentUpon>EditDocSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PopUpOptions.xaml.cs">
       <DependentUpon>PopUpOptions.xaml</DependentUpon>
     </Compile>
@@ -87,6 +90,10 @@
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\EditDocSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\PopUpOptions.xaml">
       <SubType>Designer</SubType>

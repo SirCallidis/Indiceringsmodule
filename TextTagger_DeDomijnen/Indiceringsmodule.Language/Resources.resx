@@ -117,8 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ADACode" xml:space="preserve">
+    <value>ADA Code</value>
+  </data>
+  <data name="FactSubType" xml:space="preserve">
+    <value>Fact Subtype</value>
+  </data>
+  <data name="FactType" xml:space="preserve">
+    <value>Fact Type</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="LocationCode" xml:space="preserve">
+    <value>Location Code</value>
+  </data>
   <data name="MenuEdit" xml:space="preserve">
     <value>Edit</value>
+  </data>
+  <data name="MenuEditDocSettings" xml:space="preserve">
+    <value>Edit Document Settings</value>
   </data>
   <data name="MenuFile" xml:space="preserve">
     <value>File</value>
@@ -137,5 +155,14 @@
   </data>
   <data name="MenuTools" xml:space="preserve">
     <value>Tools</value>
+  </data>
+  <data name="Municipality" xml:space="preserve">
+    <value>Municipality</value>
+  </data>
+  <data name="SourceID" xml:space="preserve">
+    <value>Source ID</value>
+  </data>
+  <data name="SourceType" xml:space="preserve">
+    <value>Source Type</value>
   </data>
 </root>

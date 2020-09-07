@@ -11,6 +11,8 @@ namespace Indiceringsmodule.Presentation
 {
     public class PopUpOptionsViewModel : Observable
     {
+        #region Fields & Properties
+
         private protected EventAggregator Ea;
 
         private string _SelectedLanguage;
@@ -27,10 +29,16 @@ namespace Indiceringsmodule.Presentation
             set { SetProperty(ref _Languages, value); }
         }
 
+        #endregion
+
+        #region RelayCommands
 
         public RelayCommand ClosePopUp { get; private set; }
         public RelayCommand SelectedLanguageChanged { get; private set; }
 
+        #endregion
+
+        #region Default Constructor
 
         public PopUpOptionsViewModel(EventAggregator ea)
         {
@@ -42,8 +50,14 @@ namespace Indiceringsmodule.Presentation
         {
             ClosePopUp = new RelayCommand(OnClosePopUp, CanClosePopUp);
             SelectedLanguageChanged = new RelayCommand(OnSelectedLanguageChanged, CanSelectedLanguageChanged);
+            
+            //TODO language list is momentarily hardcoded
             Languages = new List<string> { "English", "Deutsch", "Nederlands" };
         }
+
+        #endregion
+
+        #region Methods
 
         private bool CanSelectedLanguageChanged()
         {
@@ -74,5 +88,7 @@ namespace Indiceringsmodule.Presentation
                 Ea.Publish(new ClosePopUpEventModel() { });
             }
         }
+
+        #endregion
     }
 }

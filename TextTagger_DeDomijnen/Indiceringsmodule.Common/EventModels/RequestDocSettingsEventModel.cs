@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Indiceringsmodule.Common
+namespace Indiceringsmodule.Common.EventModels
 {
-    class Class1
+    public class RequestDocSettingsEventModel
     {
     }
 }

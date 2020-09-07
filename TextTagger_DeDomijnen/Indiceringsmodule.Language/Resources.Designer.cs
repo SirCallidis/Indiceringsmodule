@@ -61,11 +61,65 @@ namespace Indiceringsmodule.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ADA Code.
+        /// </summary>
+        public static string ADACode {
+            get {
+                return ResourceManager.GetString("ADACode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fact Subtype.
+        /// </summary>
+        public static string FactSubType {
+            get {
+                return ResourceManager.GetString("FactSubType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fact Type.
+        /// </summary>
+        public static string FactType {
+            get {
+                return ResourceManager.GetString("FactType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Location.
+        /// </summary>
+        public static string Location {
+            get {
+                return ResourceManager.GetString("Location", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Location Code.
+        /// </summary>
+        public static string LocationCode {
+            get {
+                return ResourceManager.GetString("LocationCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         public static string MenuEdit {
             get {
                 return ResourceManager.GetString("MenuEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Document Settings.
+        /// </summary>
+        public static string MenuEditDocSettings {
+            get {
+                return ResourceManager.GetString("MenuEditDocSettings", resourceCulture);
             }
         }
         
@@ -120,6 +174,33 @@ namespace Indiceringsmodule.Language {
         public static string MenuTools {
             get {
                 return ResourceManager.GetString("MenuTools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Municipality.
+        /// </summary>
+        public static string Municipality {
+            get {
+                return ResourceManager.GetString("Municipality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source ID.
+        /// </summary>
+        public static string SourceID {
+            get {
+                return ResourceManager.GetString("SourceID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source Type.
+        /// </summary>
+        public static string SourceType {
+            get {
+                return ResourceManager.GetString("SourceType", resourceCulture);
             }
         }
     }

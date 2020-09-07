@@ -22,11 +22,11 @@ namespace Indiceringsmodule.Presentation
         private readonly List<Subscription> Subscriptions = new List<Subscription>();
         private FlowDocument _doc;
 
-        private readonly EventAggregator ea;
+        private readonly EventAggregator Ea;
         
         public Menu(EventAggregator ea)
         {
-            this.ea = ea;
+            Ea = ea;
             Subscriptions.Add(ea.Subscribe<PublishDocumentEventModel>(m => DocumentReceived(m.Document)));
         }
 
@@ -112,21 +112,21 @@ namespace Indiceringsmodule.Presentation
                                 using (var reader = new ServiceReaderRTF())
                                 {
                                     var doc = reader.LoadDocument(inputFilePath);
-                                    ea.Publish(new DocumentLoadedEventModel() { Document = doc });
+                                    Ea.Publish(new DocumentLoadedEventModel() { Document = doc });
                                 }
                                 break;
                             case ".docx":
                                 using (var reader = new ServiceReaderDocx())
                                 {
                                     var doc = reader.LoadDocument(inputFilePath);
-                                    ea.Publish(new DocumentLoadedEventModel() { Document = doc });
+                                    Ea.Publish(new DocumentLoadedEventModel() { Document = doc });
                                 };
                                 break;
                             case ".jpg":
                                 using (var reader = new ServiceReaderJPG())
                                 {
                                     var doc = reader.LoadDocument(inputFilePath);
-                                    ea.Publish(new DocumentLoadedEventModel() { Document = doc });
+                                    Ea.Publish(new DocumentLoadedEventModel() { Document = doc });
                                 };
                                 break;
                             case ".json":
@@ -151,6 +151,22 @@ namespace Indiceringsmodule.Presentation
                 //var completedFilePath = Path.Combine(completedDirectoryPath, completedFileName);
                 //File.Move(inProgressFilePath, completedFilePath);
             }
+        }
+
+        internal bool CanEditDocSettings()
+        {
+            return true;
+        }
+
+        internal void OnEditDocSettings()
+        {
+            if (CanEditDocSettings())
+            {
+                var editDocSettingsVM = new EditDocSettingsViewModel(Ea);
+                Ea.Publish(new RequestDocSettingsEventModel() { });
+                Ea.Publish(new RequestViewForViewModelEventModel() { Data = editDocSettingsVM });
+            }
+
         }
 
         #endregion
@@ -201,7 +217,7 @@ namespace Indiceringsmodule.Presentation
 
             saveFileDialog.InitialDirectory = targetDirectory;
 
-            ea.Publish(new RequestDocumentForSavingEventModel() { });
+            Ea.Publish(new RequestDocumentForSavingEventModel() { });
 
             if (saveFileDialog.ShowDialog() == true)
             {

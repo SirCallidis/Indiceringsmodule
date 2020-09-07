@@ -67,7 +67,7 @@ namespace Indiceringsmodule.Presentation
         public RelayCommand Menu_SaveFile { get; private set; }
         public RelayCommand Menu_CloseFile { get; private set; }
         public RelayCommand Menu_OptionsPopUp { get; private set; }
-
+        public RelayCommand Menu_EditDocSettings { get; private set; }
         #endregion
 
         #region Default Constructor
@@ -87,6 +87,7 @@ namespace Indiceringsmodule.Presentation
             Menu_SaveFile = new RelayCommand(Menu.OnSaveFile, Menu.CanSaveFile);
             Menu_CloseFile = new RelayCommand(Menu.OnCloseProgram, Menu.CanCloseProgram);
             Menu_OptionsPopUp = new RelayCommand(OnOptionsPopUp, CanOptionsPopUp);
+            Menu_EditDocSettings = new RelayCommand(Menu.OnEditDocSettings, Menu.CanEditDocSettings);
 
             Subscriptions.Add(Ea.Subscribe<ProvidingViewForViewModelEventModel> (m => ResolveView(m.Data)));
             Subscriptions.Add(Ea.Subscribe<ClosePopUpEventModel>(m => ResolvePopUpVisibility()));

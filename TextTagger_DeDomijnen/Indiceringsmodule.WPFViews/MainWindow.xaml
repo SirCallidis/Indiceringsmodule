@@ -31,7 +31,9 @@
                 <MenuItem Header="{x:Static lang:Resources.MenuSave}" Command="{Binding Menu_SaveFile}"/>
                 <MenuItem Header="{x:Static lang:Resources.MenuQuit}" Command="{Binding Menu_CloseFile}"/>
             </MenuItem>
-            <MenuItem Header="{x:Static lang:Resources.MenuEdit}"/>
+            <MenuItem Header="{x:Static lang:Resources.MenuEdit}">
+                <MenuItem Header="{x:Static lang:Resources.MenuEditDocSettings}" Command="{Binding Menu_EditDocSettings}"/>
+            </MenuItem>
             <MenuItem Header="{x:Static lang:Resources.MenuTools}">
                 <MenuItem Header="{x:Static lang:Resources.MenuOptions}" Command="{Binding Menu_OptionsPopUp}"/>
             </MenuItem>

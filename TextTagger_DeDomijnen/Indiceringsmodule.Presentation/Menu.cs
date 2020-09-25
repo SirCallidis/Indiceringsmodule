@@ -16,23 +16,15 @@ namespace Indiceringsmodule.Presentation
 {
     public class Menu : Observable
     {
-        private static readonly string BackupDirectoryName = "backup";
-        private static readonly string InProgressDirectoryName = "processing";
-        private static readonly string CompletedDirectoryName = "complete";
-        private readonly List<Subscription> Subscriptions = new List<Subscription>();
-        private FlowDocument _doc;
-
         private readonly EventAggregator Ea;
-        
-        public Menu(EventAggregator ea)
+        private readonly FileLoader fileLoader;
+        private readonly FileSaver fileSaver;
+
+        public Menu(EventAggregator ea, FileLoader fileLoader, FileSaver fileSaver)
         {
             Ea = ea;
-            Subscriptions.Add(ea.Subscribe<PublishDocumentEventModel>(m => DocumentReceived(m.Document)));
-        }
-
-        private void DocumentReceived(FlowDocument document)
-        {
-            _doc = document;
+            this.fileLoader = fileLoader;
+            this.fileSaver = fileSaver;
         }
 
         #region Command Methods - Menu_LoadFile
@@ -55,101 +47,7 @@ namespace Indiceringsmodule.Presentation
         {
             if (CanLoadFile())
             {
-                OpenLoadFileDialog();
-            }
-        }
-
-        /// <summary>
-        /// definitive method that is called for loading a file
-        /// when earlier checks passed.
-        /// </summary>
-        private void OpenLoadFileDialog()
-        {
-            OpenFileDialog ofd = new OpenFileDialog
-            {               
-                Filter = "Microsoft Word Documents (*.docx)|*.docx|Rich Text Documents (*.rtf)|*.rtf|Json files (*.json)|*.json|All files (*.*)|*.*",
-                FilterIndex = 2,
-            };
-
-            var path = AppDomain.CurrentDomain.BaseDirectory;
-            //var rootPath = Path.GetFullPath(Path.Combine(path, @"..\..\"));
-            var rootPath = new DirectoryInfo(path).Parent.Parent.FullName;
-            var targetDirectory = rootPath + @"\SavedFiles";
-            ofd.InitialDirectory = targetDirectory;
-
-            if (ofd.ShowDialog() == true)
-            {
-                var inputFilePath = ofd.FileName;
-
-                //check if backup directory exists
-                //var inputFileDirectoryPath = Path.GetDirectoryName(inputFilePath);
-                var backupFileDirectoryPath = Path.Combine(rootPath, BackupDirectoryName);
-                Directory.CreateDirectory(backupFileDirectoryPath);
-
-                //copy file to backup dir
-                var inputFileName = Path.GetFileName(inputFilePath);
-                var backupFilePath = Path.Combine(backupFileDirectoryPath, inputFileName);
-                File.Copy(inputFilePath, backupFilePath, true);
-
-                //move file to in progress dir
-                //Directory.CreateDirectory(Path.Combine(rootPath, InProgressDirectoryName));
-                //var inProgressFilePath =
-                //    Path.Combine(rootPath, InProgressDirectoryName, inputFileName);
-                //if (File.Exists(inProgressFilePath))
-                //{
-                //    throw new ArgumentException($"a file with the name {inProgressFilePath} is already being used");
-                //}
-                //File.Move(inputFilePath, inProgressFilePath);
-
-                var ext = Path.GetExtension(inputFilePath);
-                if (File.Exists(inputFilePath))
-                {
-                    try
-                    {
-                        switch (ext)
-                        {
-                            case ".rtf":
-                                using (var reader = new ServiceReaderRTF())
-                                {
-                                    var doc = reader.LoadDocument(inputFilePath);
-                                    Ea.Publish(new DocumentLoadedEventModel() { Document = doc });
-                                }
-                                break;
-                            case ".docx":
-                                using (var reader = new ServiceReaderDocx())
-                                {
-                                    var doc = reader.LoadDocument(inputFilePath);
-                                    Ea.Publish(new DocumentLoadedEventModel() { Document = doc });
-                                };
-                                break;
-                            case ".jpg":
-                                using (var reader = new ServiceReaderJPG())
-                                {
-                                    var doc = reader.LoadDocument(inputFilePath);
-                                    Ea.Publish(new DocumentLoadedEventModel() { Document = doc });
-                                };
-                                break;
-                            case ".json":
-                                break;
-                            case ".txt":
-                                break;
-                            default:
-                                throw new ArgumentException($"{ext} is an unsupported file type.");
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        throw new ArgumentException($"Error loading file. {e}");
-                    }
-                }
-
-                //move processed file to completed dir
-                //var completedDirectoryPath = Path.Combine(rootPath, CompletedDirectoryName);
-                //Directory.CreateDirectory(completedDirectoryPath);
-                //var completedFileName =
-                //    $"{Path.GetFileNameWithoutExtension(inputFilePath)}-{Guid.NewGuid()}{ext}";
-                //var completedFilePath = Path.Combine(completedDirectoryPath, completedFileName);
-                //File.Move(inProgressFilePath, completedFilePath);
+                fileLoader.LoadFile();
             }
         }
 
@@ -191,52 +89,11 @@ namespace Indiceringsmodule.Presentation
         {
             if (CanSaveFile())
             {
-                OpenSaveFileDialog();
+                fileSaver.SaveFile();
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        private void OpenSaveFileDialog()
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
-            {
-                Filter = "Microsoft Word Documents (*.docx)|*.docx|Rich Text Documents (*.rtf)|*.rtf|Json files (*.json)|*.json",
-                DefaultExt = ".json"
-            };
-
-            var path = AppDomain.CurrentDomain.BaseDirectory;
-            var rootPath = Path.GetFullPath(Path.Combine(path, @"..\..\"));
-            var targetDirectory = rootPath + @"SavedFiles";
-
-            if (!Directory.Exists(targetDirectory))
-            {
-                Directory.CreateDirectory(targetDirectory);
-            }
-
-            saveFileDialog.InitialDirectory = targetDirectory;
-
-            Ea.Publish(new RequestDocumentForSavingEventModel() { });
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                //TODO - This happens when file is saved/
-                var selectedPath = saveFileDialog.FileName;               
-                Task.Run(() => SaveFileToJson(selectedPath));
-                ValuesChanged = false;
-            }
-            else
-            {
-                MessageBox.Show("Error while saving");
-            }
-        }
-
-        private void SaveFileToJson(string path)
-        {
-            var reader = new ServiceReaderJSON();
-            reader.SaveDocument(_doc, path);
-        }
+        
 
         #endregion
 

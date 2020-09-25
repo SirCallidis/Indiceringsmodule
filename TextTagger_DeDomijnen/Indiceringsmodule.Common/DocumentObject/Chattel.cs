@@ -6,15 +6,19 @@ using System.Threading.Tasks;
 
 namespace Indiceringsmodule.Common.DocumentObject
 {
-    public class Chattel : Observable
+    public class Chattel : FactMember
     {
         #region Fields & Properties
+        
         #endregion
+
 
         #region Default Constructor
 
-        public Chattel()
+        public Chattel(int id, string linkSelection)
         {
+            ID = id;
+            LinkSelection = linkSelection;
         }
 
         #endregion

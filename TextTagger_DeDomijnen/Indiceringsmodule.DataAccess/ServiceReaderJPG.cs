@@ -1,6 +1,7 @@
 ﻿using Indiceringsmodule.Common.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -32,6 +33,37 @@ namespace Indiceringsmodule.DataAccess
             doc.Blocks.Add(new BlockUIContainer(image));
 
             return doc;
+        }
+
+        public KeyValuePair<string, Image> LoadImagePair(string path)
+        {
+            string name = Path.GetFileName(path);
+                       
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(path);
+            bitmap.EndInit();
+            var image = new Image
+            {
+                Source = bitmap,
+                Stretch = Stretch.Uniform
+            };
+
+            var Pair = new KeyValuePair<string, Image>(name, image);
+            return Pair;
+        }
+
+        public KeyValuePair<string, BitmapImage> LoadBitmapPair(string path)
+        {
+            string name = Path.GetFileName(path);
+
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(path);
+            bitmap.EndInit();
+
+            var Pair = new KeyValuePair<string, BitmapImage>(name, bitmap);
+            return Pair;
         }
 
         public Task SaveDocument(FlowDocument document, string selectedPath)

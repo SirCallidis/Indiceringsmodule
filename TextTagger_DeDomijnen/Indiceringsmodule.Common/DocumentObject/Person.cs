@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Indiceringsmodule.Common.DocumentObject
 {
-    public class Person : Observable
+    public class Person : FactMember
     {
         #region Fields & Properties
 
@@ -71,8 +71,10 @@ namespace Indiceringsmodule.Common.DocumentObject
 
         #region Default Constructor
 
-        public Person()
+        public Person(int id, string linkSelection)
         {
+            ID = id;
+            LinkSelection = linkSelection;
         }
 
         #endregion

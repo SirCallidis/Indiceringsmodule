@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Indiceringsmodule.Common.DocumentObject
 {
-    public class RealEstate : Observable
+    public class RealEstate : FactMember
     {
         #region Fields & Properties
 
@@ -63,8 +63,10 @@ namespace Indiceringsmodule.Common.DocumentObject
 
         #region Default Constructor
 
-        public RealEstate()
+        public RealEstate(int id, string linkSelection)
         {
+            ID = id;
+            LinkSelection = linkSelection;
         }
 
         #endregion

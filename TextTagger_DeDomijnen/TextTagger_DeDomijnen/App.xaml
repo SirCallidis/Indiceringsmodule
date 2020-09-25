@@ -4,6 +4,12 @@
              xmlns:local="clr-namespace:Indiceringsmodule"
              >
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Indiceringsmodule.WPFViews;component/Resources/Margins.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Indiceringsmodule.WPFViews;component/Resources/PopupWindow.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Indiceringsmodule.WPFViews;component/Resources/UserControls.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

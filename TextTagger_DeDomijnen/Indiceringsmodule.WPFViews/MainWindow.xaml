@@ -7,13 +7,13 @@
         xmlns:lang="clr-namespace:Indiceringsmodule.Language;assembly=Indiceringsmodule.Language"
         xmlns:presentation="clr-namespace:Indiceringsmodule.Presentation;assembly=Indiceringsmodule.Presentation"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="768" Width="1366" MinHeight="720" MinWidth="1280">
 
-    <Window.Resources>
+    <!--<Window.Resources>
         <DataTemplate DataType="{x:Type presentation:IndiceringsmoduleTestViewModel}">
             <local:IndiceringsmoduleTestView/>
         </DataTemplate>
-    </Window.Resources>
+    </Window.Resources>-->
 
     <Grid IsEnabled="{Binding ContentEnabled}">
         <Grid.RowDefinitions>
@@ -39,6 +39,6 @@
             </MenuItem>
         </Menu>
 
-        <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}"/>
+        <ContentControl Grid.Row="1" Content="{Binding CurrentView}"/>
     </Grid>
 </Window>

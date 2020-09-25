@@ -24,11 +24,18 @@ namespace Indiceringsmodule.Presentation
         private protected Menu Menu;
         private readonly List<Subscription> Subscriptions = new List<Subscription>();
 
-        private Observable _CurrentViewModel;
-        public Observable CurrentViewModel
+        //private Observable _CurrentViewModel;
+        //public Observable CurrentViewModel
+        //{
+        //    get { return _CurrentViewModel; }
+        //    set { SetProperty(ref _CurrentViewModel, value); }
+        //}
+
+        private UserControl _CurrentView;
+        public UserControl CurrentView
         {
-            get { return _CurrentViewModel; }
-            set { SetProperty(ref _CurrentViewModel, value); }
+            get { return _CurrentView; }
+            set { SetProperty(ref _CurrentView, value); }
         }
 
         private UserControl _PopUpWindow;

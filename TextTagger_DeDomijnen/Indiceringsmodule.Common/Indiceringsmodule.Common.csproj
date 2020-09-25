@@ -47,6 +47,7 @@
     <Compile Include="DocumentObject\Chattel.cs" />
     <Compile Include="DocumentObject\DocumentObject.cs" />
     <Compile Include="DocumentObject\Fact.cs" />
+    <Compile Include="DocumentObject\FactMember.cs" />
     <Compile Include="DocumentObject\Person.cs" />
     <Compile Include="DocumentObject\RealEstate.cs" />
     <Compile Include="DocumentObject\Settings.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="EventModels\ClosePopUpEventModel.cs" />
     <Compile Include="EventModels\DocumentLoadedEventModel.cs" />
     <Compile Include="EventModels\LanguageChangedEventModel.cs" />
+    <Compile Include="EventModels\LoadedKVPairStringBitmapimageEventModel.cs" />
     <Compile Include="EventModels\MessageObjectModel.cs" />
     <Compile Include="EventModels\ProvidingViewForViewModelEventModel.cs" />
     <Compile Include="EventModels\PublishDocSettingsEventModel.cs" />
@@ -63,11 +65,13 @@
     <Compile Include="EventModels\RequestDocumentForSavingEventModel.cs" />
     <Compile Include="EventModels\PublishDocumentEventModel.cs" />
     <Compile Include="EventModels\RequestViewForViewModelEventModel.cs" />
+    <Compile Include="EventModels\UpdateViewEventModel.cs" />
     <Compile Include="EventRaiser.cs" />
     <Compile Include="Interfaces\IDocumentReader.cs" />
     <Compile Include="Interfaces\IEventAggregator.cs" />
     <Compile Include="Interfaces\ISubscriber.cs" />
     <Compile Include="Observable.cs" />
+    <Compile Include="ObservableDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="RichTextBoxHelper.cs" />

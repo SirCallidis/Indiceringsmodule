@@ -1,5 +1,6 @@
 ﻿using Indiceringsmodule.Common;
 using Indiceringsmodule.Common.EventModels;
+using Indiceringsmodule.DataAccess;
 using Indiceringsmodule.Presentation;
 using Indiceringsmodule.WPFViews;
 using System;
@@ -29,12 +30,23 @@ namespace Indiceringsmodule
 
         private static void ComposeObjects()
         {
+            //create var imtv IndiceringsmoduleTestView with ea (change imtv ctor to accept ea)
+            //change MainWindowViewModel.CurrentViewModel to CurrentView
+            //Set CurrentView to imtv
+            //disable MainWindowView xaml bindings
+            //set MainWindowView.xaml's Contentcontrol to CurrentView
+
             var ea = new EventAggregator();
-            var menu = new Presentation.Menu(ea);
+            var fileLoader = new FileLoader(ea);
+            var fileSaver = new FileSaver(ea);
+            var menu = new Presentation.Menu(ea, fileLoader, fileSaver);
+            var imtvm = new IndiceringsmoduleViewModel(ea, fileLoader, fileSaver);
+            var imtv = new IndiceringsmoduleView(ea) { DataContext = imtvm };
+            
             new ViewModelCoupler(ea);
             var viewModel = new MainWindowViewModel(ea, menu)
             {
-                CurrentViewModel = new IndiceringsmoduleTestViewModel(ea)
+                CurrentView = imtv
             };
             Current.MainWindow = new MainWindow(ea, viewModel);
         }

@@ -1,8 +1,12 @@
 ﻿using Indiceringsmodule.Common;
+using Indiceringsmodule.Common.DocumentObject;
+using Indiceringsmodule.Common.EventModels;
 using Indiceringsmodule.DataAccess;
 using Indiceringsmodule.Presentation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -23,29 +27,38 @@ namespace Indiceringsmodule.WPFViews
     /// <summary>
     /// Interaction logic for IndiceringsmoduleRoot.xaml
     /// </summary>
-    public partial class IndiceringsmoduleTestView : UserControl
+    public partial class IndiceringsmoduleView : UserControl
     {
-        // TODO - clean up this code-behind
 
         #region Fields & Properties
             
         private protected EventAggregator Ea;
+        private readonly List<Subscription> Subscriptions = new List<Subscription>();
+        private double oldSize;
 
         #endregion
 
         #region Default Constructor
 
-        public IndiceringsmoduleTestView()
+        public IndiceringsmoduleView(EventAggregator ea)
         {
+            Ea = ea;
             InitializeComponent();
             DataObject.AddPastingHandler(this, OnPaste);
             SetRichTBTextSettings();
+            ResetSlider();           
 
-            //TODO - below: breaks because constructor hasn't finished yet => after finish it sets the datacontext in markup
-            //solution: on-startup method, like in charcreator
-            //var dCon = DataContext as IndiceringsmoduleTestViewModel;
-            //this.ea = dCon.ea;
+            Subscriptions.Add(Ea.Subscribe<UpdateViewEventModel>(m => UpdateView(m.Data)));
         }
+
+        /// <summary>
+        /// Sets the slider halfway, so a positive and negative zoom can be achieved.
+        /// </summary>
+        private void ResetSlider()
+        {
+            slider.Value = 0.55;
+        }
+
 
         #endregion
 
@@ -86,29 +99,86 @@ namespace Indiceringsmodule.WPFViews
             
         }
 
+        /// <summary>
+        /// Checks if the richTB control has a non-null FlowDocument,
+        /// then sets the Font Family, Size, and Weight to hardcoded
+        /// values.
+        /// </summary>
         private void SetRichTBTextSettings()
         {
             var doc = richTB.Document;
             if (doc == null) throw new ArgumentNullException("Document cannot be null!");
-
+            
+            //bot sure yet which is better:
+            //foreach (var block in doc.Blocks)
+            //{               
+            //    block.FontWeight = FontWeights.Normal;
+            //    block.FontSize = 14;
+            //    block.FontFamily = new FontFamily("Segoe");
+            //}
             doc.FontWeight = FontWeights.Normal;
             doc.FontSize = 14;
             doc.FontFamily = new FontFamily("Segoe");
         }
 
+        /// <summary>
+        /// Makes sure only the pasted text as string is
+        /// filtered to be pasted into richtextbox.
+        /// This omits all textformatting data.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnPaste(object sender, DataObjectPastingEventArgs e)
+        {
+            string pastingText = e.DataObject.GetData(DataFormats.Text) as string;
+            richTB.Document.ContentEnd.InsertTextInRun(pastingText);
+            e.CancelCommand();
+        }
+
+        /// <summary>
+        /// Logic that enables or disables the CreateObject button
+        /// based on wether text is selected in the richtextbox.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void richTB_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            var selection = richTB.Selection;
+            if (selection.IsEmpty == false)
+            {
+                CreateFactMemberButton.IsEnabled = true;
+            }
+            else
+            {
+                CreateFactMemberButton.IsEnabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Updates the ImageSelector's SelectedItem
+        /// with the passed variable
+        /// </summary>
+        /// <param name="docOb"></param>
+        private void UpdateView(string value)
+        {
+            var list = ImageSelector.ItemsSource as ObservableCollection<string>;
+            try
+            {                
+                var newlyAddedItemName = list.First(n => n.Equals(value));
+                ImageSelector.SelectedItem = newlyAddedItemName;
+            }
+            catch (Exception e)
+            {
+                throw new ArgumentException($"Could not find name in list {e}");
+            }                        
+        }
+
         #endregion
 
 
-        /// <summary>
-        /// may no longer be needed. see ViewModelCoupler
-        /// </summary>
-        public void SetEaOnViewLoaded()
-        {
-            //no way to call method. Next attempt: use ViewModelCoupler in App.xaml
-            var dCon = DataContext as IndiceringsmoduleTestViewModel;
-            Ea = dCon.Ea;
-        }
 
+
+        #region Temporary and Testing Methods
 
         /// <summary>
         /// method for testing purposes
@@ -173,22 +243,7 @@ namespace Indiceringsmodule.WPFViews
             Clipboard.GetText();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnPaste(object sender, DataObjectPastingEventArgs e)
-        {
-            if (e.DataObject.GetDataPresent(typeof(string)))
-            {
-                var text = Clipboard.GetText();
-                var composition = new TextComposition(InputManager.Current, this, text);
-                TextCompositionManager.StartComposition(composition);
-            }
-            //should the above need to be canceled, use e.CancelCommand
-            //e.CancelCommand(); 
-        }
+        
 
 
         private void HLink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -241,24 +296,24 @@ namespace Indiceringsmodule.WPFViews
 
         private void HeaveContentButton_Click(object sender, RoutedEventArgs e)
         {
-            var loadedDoc = fDocReader.Document;
-            var editableDoc = richTB.Document;
+            //var loadedDoc = fDocReader.Document;
+            //var editableDoc = richTB.Document;
 
             //editableDoc.Blocks.AddRange(loadedDoc.Blocks); //throws was edited exception
 
-            for (int i = 0; i < loadedDoc.Blocks.Count; i++)
-            {
-                editableDoc.Blocks.Add(loadedDoc.Blocks.ElementAt(i));
-            }
+            //for (int i = 0; i < loadedDoc.Blocks.Count; i++)
+            //{
+            //    editableDoc.Blocks.Add(loadedDoc.Blocks.ElementAt(i));
+            //}
         }
 
         private void FindImagesButton_Click(object sender, RoutedEventArgs e)
         {
-            var loadedDoc = fDocReader.Document;
-            if (loadedDoc != null)
-            {
-                var images = FindImages(loadedDoc);
-            }           
+            //var loadedDoc = fDocReader.Document;
+            //if (loadedDoc != null)
+            //{
+            //    var images = FindImages(loadedDoc);
+            //}           
         }
 
         public static IEnumerable<Image> FindImages(FlowDocument document)
@@ -308,35 +363,49 @@ namespace Indiceringsmodule.WPFViews
             //doc.FontWeight = FontWeights.Bold;
         }
 
-        
+        #endregion
 
-        private void richTB_KeyDown(object sender, KeyEventArgs e)
+
+        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (e.Key == Key.Enter)
-            {
-                //this...
-                //richTB.AppendText("\r\n");
-                e.Handled = true;
+            if (image.Source == null) return;
 
-                ////...may already do all this
-                //var content = new TextRange(richTB.Document.ContentStart, richTB.Document.ContentEnd).Text;
-                //var newContent = String.Concat(content, "\r\n");
-                //richTB.Document.Blocks.Clear();
-                //richTB.Document.Blocks.Add(new Paragraph(new Run(newContent)));
+            var path = image.Source.ToString();
+            var size = slider.Value;
+
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(path);
+            bitmap.EndInit();
+
+            double newWidth;
+            double newHeight;
+
+            if (size >= oldSize)
+            {
+                newWidth = image.ActualWidth + (image.ActualWidth * size / 100);
+                newHeight = image.ActualHeight + (image.ActualHeight * size / 100);
             }
-        }
-
-        private void richTB_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            var selection = richTB.Selection;
-            if(selection.IsEmpty == false)
+            else if (size < oldSize)
             {
-                CreateObjectButton.IsEnabled = true;
+                newWidth = image.ActualWidth - (image.ActualWidth * size / 100);
+                newHeight = image.ActualHeight - (image.ActualHeight * size / 100);
             }
             else
             {
-                CreateObjectButton.IsEnabled = false;
+                throw new ArgumentOutOfRangeException("Could not parse slider value: " + size);
             }
+
+            image.Width = newWidth;
+            image.Height = newHeight;
+            image.Source = bitmap;
+            oldSize = size;
+        }
+
+        private void ImageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var context = this.DataContext as IndiceringsmoduleViewModel;
+            image.Source = context.SelectedImage;
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Windows.Documents;
 
 namespace Indiceringsmodule.Common.EventModels
 {
-    public class DocumentLoadedEventModel
+    public class SaveCurrentFactDocumentToFact
     {
         public FlowDocument Data { get; set; }
     }

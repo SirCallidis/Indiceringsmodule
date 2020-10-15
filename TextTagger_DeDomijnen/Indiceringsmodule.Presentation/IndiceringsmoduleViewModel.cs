@@ -39,13 +39,28 @@ namespace Indiceringsmodule.Presentation
         }
 
         //holds a reference to the currently selected Fact in the view
-        private Fact _CurrentFact;
-        public Fact CurrentFact
+        private Fact _SelectedFact;
+        public Fact SelectedFact
         {
-            get { return _CurrentFact; }
-            set { SetProperty(ref _CurrentFact, value); }
+            get { return _SelectedFact; }
+            set
+            {
+                SetProperty(ref _SelectedFact, value);
+                ChangeSelectedFactNumber(value.ID);
+                OnSelectedFactChanged(value);
+            }
         }
 
+        //the number displayed in the UI representing the currently selected
+        //fact
+        private int _SelectedFactNumber;
+        public int SelectedFactNumber
+        {
+            get { return _SelectedFactNumber; }
+            set { SetProperty(ref _SelectedFactNumber, value); }
+        }
+
+        //the currently selected FactMember
         private string _SelectedFactMember;
         public string SelectedFactMember
         {
@@ -53,6 +68,7 @@ namespace Indiceringsmodule.Presentation
             set { SetProperty(ref _SelectedFactMember, value); }
         }
 
+        //list of possible FactMember type names which can be selected
         private List<string> _FactMembers;
         public List<string> FactMembers
         {
@@ -60,13 +76,7 @@ namespace Indiceringsmodule.Presentation
             set { SetProperty(ref _FactMembers, value); }
         }
 
-        private UserControl _FactMemberView;
-        public UserControl FactMemberView
-        {
-            get { return _FactMemberView; }
-            set { SetProperty(ref _FactMemberView, value); }
-        }
-
+        //the name + extension of the currently selected (and displayed) image
         private string _SelectedImageName;
         public string SelectedImageName
         {
@@ -78,6 +88,7 @@ namespace Indiceringsmodule.Presentation
             }
         }
 
+        //the currently selected Image
         private BitmapImage _SelectedImage;
         public BitmapImage SelectedImage
         {
@@ -85,6 +96,7 @@ namespace Indiceringsmodule.Presentation
             set{ SetProperty(ref _SelectedImage, value); }
         }
 
+        //List if names from each image
         private ObservableCollection<string> _ImageNameList;
         public ObservableCollection<string> ImageNameList
         {
@@ -93,13 +105,13 @@ namespace Indiceringsmodule.Presentation
         }
         #endregion
 
-
         #region Relay Commands
 
-        public RelayCommand Button_CreateFact { get; private set; }
         public RelayCommand Button_CreateFactMember { get; private set; }
         public RelayCommand Button_AddImage { get; private set; }
         public RelayCommand Button_RemoveImage { get; private set; }
+        public RelayCommand Button_SelectNextFact { get; private set; }
+        public RelayCommand Button_SelectPreviousFact { get; private set; }
 
         #endregion
 
@@ -118,47 +130,60 @@ namespace Indiceringsmodule.Presentation
             //Subscriptions.Add(Ea.Subscribe<DocumentLoadedEventModel>(m => DisplayNewCurrentDocument(m.Document)));
             Subscriptions.Add(Ea.Subscribe<RequestDocumentForSavingEventModel>(m => MakeDocumentAvailable()));
             Subscriptions.Add(Ea.Subscribe<RequestDocSettingsEventModel>(m => MakeDocSettingsAvailable()));
-            Subscriptions.Add(Ea.Subscribe<LoadedKVPairStringBitmapimageEventModel>(m => CompareLoadedImage(m.Data)));         
+            Subscriptions.Add(Ea.Subscribe<LoadedKVPairStringBitmapimageEventModel>(m => CompareLoadedImage(m.Data)));
+            Subscriptions.Add(Ea.Subscribe<CreateFactEventModel>(m => CreateFact(m.Data)));
+            Subscriptions.Add(Ea.Subscribe<SelectedFactChangedEventModel>(m => SelectedFactChanged(m.Data, m.Direction)));
+            Subscriptions.Add(Ea.Subscribe<SaveCurrentFactDocumentToFact>(m => SetInboundFactDocumentToFact(m.Data)));           
 
-            Button_CreateFact = new RelayCommand(OnCreateFact, CanCreateFact);
             Button_CreateFactMember = new RelayCommand(OnCreateFactMember, CanCreateFactMember);
             Button_AddImage = new RelayCommand(OnAddImage, CanAddImage);
             Button_RemoveImage = new RelayCommand(OnRemoveImage, CanRemoveImage);
+            Button_SelectNextFact = new RelayCommand(OnSelectNextFact, CanSelectNextFact);
+            Button_SelectPreviousFact = new RelayCommand(OnSelectPreviousFact, CanSelectPreviousFact);
 
             DocumentObject = new DocumentObject();
 
             //TODO - fix hardcoded list content
             FactMembers = new List<string>() { "*Person", "*RealEstate", "*Chattel" };
             ImageNameList = new ObservableCollection<string>() { "*<No Image Selected>" };
+            
             SelectedImageName = ImageNameList[0];
         }
 
         #endregion
 
+        #region General Methods
+
         /// <summary>
-        /// Checks wether the CurrentDocument property is null,
-        /// if it is, it sets the document parameter as the new CurrentDocument.
-        /// If it isn't, it'll append the document parameter to the existing
-        /// CurrentDocument.
+        /// Publishes an event that makes the instance of the Settings class
+        /// of the DocumentObject available to the subscriber.
         /// </summary>
-        /// <param name="document"></param>
-        //private void DisplayNewCurrentDocument(FlowDocument document)
-        //{
-        //    if (ImageFlowDocument == null)
-        //    {
-        //        ImageFlowDocument = document;
-        //    }
-        //    else
-        //    {
-        //        for (int i = 0; i < document.Blocks.Count; i++)
-        //        {
-        //            ImageFlowDocument.Blocks.Add(document.Blocks.ElementAt(i));
-        //        }
-        //    }           
-        //}
+        private void MakeDocSettingsAvailable()
+        {
+            Ea.Publish(new PublishDocSettingsEventModel() { Data = DocumentObject.Settings });
+        }
+
+        /// <summary>
+        /// Disposes of the object's subscriptions on AE
+        /// when called.
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (var sub in Subscriptions)
+            {
+                sub?.Dispose();
+            }
+        }
+
+        #endregion
 
         #region Methods dealing with Adding / Removing / Displaying (Jpg) Images
 
+        /// <summary>
+        /// Validates if (an) Image can be removed based on
+        /// the current SelectedImageName
+        /// </summary>
+        /// <returns></returns>
         private bool CanRemoveImage()
         {
             if (SelectedImageName != null)
@@ -168,6 +193,12 @@ namespace Indiceringsmodule.Presentation
             return false;
         }
 
+        /// <summary>
+        /// Fires an event to update the View
+        /// and removes the Image from the DocumentObject's collection
+        /// as well as the ImageName from this.ImageNameList.
+        /// It then sets the selected image and name to default.
+        /// </summary>
         private void OnRemoveImage()
         {
             if (CanRemoveImage())
@@ -248,8 +279,7 @@ namespace Indiceringsmodule.Presentation
         {
             if (SelectedImageName != null)
             {
-                BitmapImage image;
-                DocumentObject.Images.TryGetValue(SelectedImageName, out image);
+                DocumentObject.Images.TryGetValue(SelectedImageName, out BitmapImage image);
                 SelectedImage = image;
             }
             if(SelectedImageName == null)
@@ -260,40 +290,152 @@ namespace Indiceringsmodule.Presentation
 
         #endregion
 
+        #region Methods dealing Adding / Removing / Selecting Facts and FactMembers
+
         /// <summary>
-        /// Checks wether a new Fact can be created.
-        /// Always returns true, may be a place holder for future logic.
+        /// Saves the FlowDocument data to the currently selected fact's
+        /// FactDocument, then calls methods to find either the next or previous
+        /// Fact
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="direction"></param>
+        private void SelectedFactChanged(FlowDocument data, Enums.direction direction)
+        {
+            if (SelectedFact != null)
+            {
+                SelectedFact.FactDocument = data;
+                if (direction == Enums.direction.next)
+                {
+                    OnSelectNextFact();
+                }
+                if (direction == Enums.direction.previous)
+                {
+                    OnSelectPreviousFact();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns a boolean based on whether a previous fact,
+        /// meaning one with a lower ID number, can be selected.
         /// </summary>
         /// <returns></returns>
-        private bool CanCreateFact()
+        private bool CanSelectPreviousFact()
         {
-            return true;
+            if (SelectedFact == null) return false;
+            var currentIDnumber = SelectedFact.ID;
+            var result = DocumentObject.IsThereALowerFactID(currentIDnumber);
+            if (result)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Finds the previous fact in the list and sets it as the SelectedFact
+        /// </summary>
+        private void OnSelectPreviousFact()
+        {
+            if (CanSelectPreviousFact())
+            {
+                var previousFactID = SelectedFact.ID - 1;
+                var fact = DocumentObject.TotalFacts.Where(f => f.ID == previousFactID).First();
+                SelectedFact = fact;
+            }
+        }
+
+        /// <summary>
+        /// Returns a boolean based on whether a next fact,
+        /// meaning one with a higher ID number, can be selected.
+        /// </summary>
+        /// <returns></returns>
+        private bool CanSelectNextFact()
+        {
+            if (SelectedFact == null) return false;
+            var currentIDnumber = SelectedFact.ID;
+            var result = DocumentObject.IsThereAHigherFactID(currentIDnumber);
+            if (result)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Finds the next fact in the list and sets it as the SelectedFact
+        /// </summary>
+        private void OnSelectNextFact()
+        {
+            if (CanSelectNextFact())
+            {
+                var nextFactID = SelectedFact.ID + 1;
+                var fact = DocumentObject.TotalFacts.Where(f => f.ID == nextFactID).First();
+                SelectedFact = fact;
+            }
+        }
+
+        /// <summary>
+        /// Fires an event with the fact as a payload to notify the view
+        /// to update its appropriate ui element.
+        /// </summary>
+        /// <param name="factDocument">FlowDocument payload of the event.</param>
+        private void OnSelectedFactChanged(Fact fact)
+        {
+            Ea.Publish(new PublishFactEventModel() { Data = fact });
         }
 
         /// <summary>
         /// Creates a new Fact and sets the CurrentFact to a reference of it
         /// </summary>
-        private void OnCreateFact()
+        private void CreateFact(string selection)
         {
-            if (CanCreateFact())
-            {
-                DocumentObject.CreateFact();
-                CurrentFact = DocumentObject.TotalFacts.OrderByDescending(f => f.ID).First();
-            }
+            DocumentObject.CreateFact(selection);
+            var newlyCreatedFact = DocumentObject.TotalFacts.OrderByDescending(f => f.ID).First();
+            Ea.Publish(new NewFactWasCreatedEventModel() { Data = newlyCreatedFact });
+            SelectedFact = newlyCreatedFact;
         }
 
         /// <summary>
-        /// Checks wether a new Fact Member can be created.
+        /// Sets the SelectedFactNumber to display correctly.
+        /// basically parsing Fact ID's 0-based int to the list's 1-based int. 
+        /// </summary>
+        /// <param name="id"></param>
+        private void ChangeSelectedFactNumber(int id)
+        {
+            SelectedFactNumber = id + 1;
+        }
+
+        /// <summary>
+        /// Receives a flowDocument and sets it as the 
+        /// selectedFact's FactDocument property.
+        /// </summary>
+        /// <param name="doc"></param>
+        private void SetInboundFactDocumentToFact(FlowDocument doc)
+        {
+            SelectedFact.FactDocument = doc;
+        }
+
+        /// <summary>
+        /// Checks whether a new Fact Member can be created.
         /// Always returns true, may be a place holder for future logic.
         /// </summary>
         /// <returns></returns>
         private bool CanCreateFactMember()
         {
+            //validate selection?
             return true;
         }
 
         private void OnCreateFactMember()
         {
+            //is fired by view codebehind
             if (CanCreateFactMember())
             {
                 //event that asks for what the current selection is
@@ -306,19 +448,25 @@ namespace Indiceringsmodule.Presentation
                 switch (SelectedFactMember)
                 {
                     case "*Person":
-                        CurrentFact.CreatePerson(selection);
+                        SelectedFact.CreatePerson(selection);
                         break;
                     case "*RealEstate":
-                        CurrentFact.CreateRealEstate(selection);
+                        SelectedFact.CreateRealEstate(selection);
                         break;
                     case "*Chattel":
-                        CurrentFact.CreateChattel(selection);
-                        break;                        
+                        SelectedFact.CreateChattel(selection);
+                        break;
+                    case null:
+                        MessageBox.Show("*Select a fact type first");
+                        break;
                     default:
                         throw new ArgumentException("Could not process input:" + SelectedFactMember);
                 }
             }
         }
+        #endregion
+
+
 
 
         private void MakeDocumentAvailable()
@@ -326,16 +474,6 @@ namespace Indiceringsmodule.Presentation
             //TODO - Needs work: this needs to return the whole DocObject
             Ea.Publish(new PublishDocumentEventModel() { Data = DocumentObject });
         }
-
-        /// <summary>
-        /// Publishes an event that makes the instance of the Settings class
-        /// of the DocumentObject available to the subscriber.
-        /// </summary>
-        private void MakeDocSettingsAvailable()
-        {
-            Ea.Publish(new PublishDocSettingsEventModel() { Data = DocumentObject.Settings });
-        }
-
 
         private IEnumerable<Block> RemoveChildren(Block block)
         {
@@ -348,14 +486,6 @@ namespace Indiceringsmodule.Presentation
                 return list;
             }
             return list;
-        }
-
-        public void Dispose()
-        {
-            foreach (var sub in Subscriptions)
-            {
-                sub?.Dispose();
-            }
-        }
+        }       
     }
 }

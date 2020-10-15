@@ -31,6 +31,13 @@ namespace Indiceringsmodule.Presentation
         //    set { SetProperty(ref _CurrentViewModel, value); }
         //}
 
+        private ResXResourceSet _LangResource;
+        public ResXResourceSet LangResource
+        {
+            get { return _LangResource; }
+            set { SetProperty(ref _LangResource, value); }
+        }
+
         private UserControl _CurrentView;
         public UserControl CurrentView
         {
@@ -79,11 +86,12 @@ namespace Indiceringsmodule.Presentation
 
         #region Default Constructor
 
-        public MainWindowViewModel(EventAggregator ea, Menu menu)
+        public MainWindowViewModel(EventAggregator ea, Menu menu, ResXResourceSet langResource)
         {
             Ea = ea ?? throw new ArgumentNullException(nameof(ea));
+            LangResource = langResource ?? throw new ArgumentNullException(nameof(langResource));
             this.Menu = menu;
-            WireUpForm();            
+            WireUpForm();  
         }
 
         private void WireUpForm()

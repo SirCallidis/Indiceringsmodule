@@ -6,9 +6,9 @@
              xmlns:local="clr-namespace:Indiceringsmodule.WPFViews"
              xmlns:common="clr-namespace:Indiceringsmodule.Common;assembly=Indiceringsmodule.Common"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="700" d:DesignWidth="800">
 
-    
+
     <UserControl.Resources>
         <ResourceDictionary>
             <Thickness x:Key="BorderMargin">10</Thickness>
@@ -106,7 +106,7 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -116,7 +116,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition MinHeight="100" Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition MinHeight="100" Height="Auto"/>
+            <RowDefinition MinHeight="250" Height="Auto" MaxHeight="500"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -179,12 +179,28 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Rectangle Fill="#f7f7f7"/>
-                <TextBlock Text="*Transcription" VerticalAlignment="Top"/>
-                <RichTextBox Grid.Row="1" Style="{StaticResource richTextBox}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="*Transcription" VerticalAlignment="Top"/>
+                    <Button Grid.Column="1" x:Name="CreateFactButton" Content="*Create Fact >" Style="{StaticResource DefaultButton}" Click="CreateFactButton_Click" HorizontalAlignment="Right"/>
+                </Grid>
+                <ScrollViewer Grid.Row="1" x:Name="transcriptionScrollViewer">
+                    <RichTextBox  Grid.Row="1" x:Name="transcriptionRichTB" Style="{StaticResource richTextBox}" SelectionChanged="TranscriptionRichTB_SelectionChanged">
+                        <RichTextBox.Resources>
+                            <Style TargetType="{x:Type Paragraph}">
+                                <Setter Property="Margin" Value="0"/>
+                            </Style>
+                        </RichTextBox.Resources>
+                    </RichTextBox>
+                </ScrollViewer>
+
             </Grid>
         </Border>
 
-        <GridSplitter Grid.Row="4" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="#57335b" HorizontalAlignment="Stretch"/>
+        <GridSplitter Grid.Row="4" Grid.ColumnSpan="2" x:Name="GridSplitter2" BorderThickness="1" BorderBrush="#57335b" HorizontalAlignment="Stretch"/>
 
         <StackPanel Grid.Row="3" Grid.Column="1">
             <Border Grid.Row="3" Margin="{StaticResource BorderMargin}" Style="{StaticResource StandardBorder}" Grid.ColumnSpan="2">
@@ -194,18 +210,41 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Rectangle Fill="#f7f7f7"/>
-                    <TextBlock Text="*Fact" VerticalAlignment="Top"/>
-                    <RichTextBox Grid.Row="1" x:Name="richTB" Style="{StaticResource richTextBox}" IsDocumentEnabled="True" Padding="5" SelectionChanged="richTB_SelectionChanged">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="*Fact:" VerticalAlignment="Top"/>
+                            <TextBlock Text="{Binding SelectedFactNumber}" VerticalAlignment="Top"/>
+                            <TextBlock Text="*of"/>
+                            <TextBlock Text="{Binding DocumentObject.TotalFacts.Count}" x:Name="TotalFactsLabel"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource DefaultButton}" Content="*Next Fact" Click="NextFactButton_Click" Command="{Binding Button_SelectNextFact}"/>
+                            <Button Style="{StaticResource DefaultButton}" Content="*Previous Fact" Command="{Binding Button_SelectPreviousFact}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- common:RichTextBoxHelper.DocumentXaml="{Binding CurrentFact.FactDocument, UpdateSourceTrigger=PropertyChanged}"  -->
+                    <ContentControl x:Name="RTBDisplayer" Padding="5" Grid.Row="1"/>
+                    <!--
+                    <RichTextBox Grid.Row="1" x:Name="factRichTB"                                 
+                                 Style="{StaticResource richTextBox}" IsDocumentEnabled="True" Padding="5" 
+                                 SelectionChanged="factRichTB_SelectionChanged" 
+                                 LostFocus="factRichTB_LostFocus">
                         <RichTextBox.Resources>
                             <Style TargetType="{x:Type Paragraph}">
                                 <Setter Property="Margin" Value="0"/>
                             </Style>
                         </RichTextBox.Resources>
                     </RichTextBox>
+                    -->
                 </Grid>
             </Border>
             <Button Content="Get RichTextBox Specs" Style="{StaticResource DefaultButton}" Click="GetRichTextBoxSpecsButton_Click"/>
-            <Button Content="Put all text in one Block" Style="{StaticResource DefaultButton}" Click="PutAllTextInOneBlockButton_Click"/>
+            <Button Content="Empty Button" Style="{StaticResource DefaultButton}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="5" Grid.Column="0">
@@ -220,8 +259,8 @@
                     <TextBlock Text="*Fact Member" VerticalAlignment="Top"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button x:Name="CreateFactMemberButton" 
-                                Content="*Create FactMember" IsEnabled="False" 
-                                Command="{Binding Button_CreateFactMember}"
+                                Content="*Create FactMember" 
+                                Click="CreateFactMemberButton_Click"
                                 Style="{StaticResource DefaultButton}"/>
                         <ComboBox x:Name="FactMemberSelector" Width="200"
                           Style="{StaticResource RoundComboBox}"
@@ -241,7 +280,7 @@
         </StackPanel>
 
         <!--Not using this anymore since TranscriptionDocument is now FactDocument inside Fact, inside List<Fact> of DocumentObject-->
-        <!--<RichTextBox x:Name="richTB" IsDocumentEnabled="True" common:RichTextBoxHelper.DocumentXaml="{Binding DocumentObject.TranscriptionDocument, UpdateSourceTrigger=PropertyChanged}"/>-->
+        <!--<RichTextBox x:Name="richTB" IsDocumentEnabled="True" common:RichTextBoxHelper.DocumentXaml="{Binding CurrentFact.FactDocument, UpdateSourceTrigger=PropertyChanged}"/>-->
         
     </Grid>
 </UserControl>

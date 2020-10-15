@@ -72,14 +72,14 @@ namespace Indiceringsmodule.DataAccess
                                 using (var reader = new ServiceReaderRTF())
                                 {
                                     var doc = reader.LoadDocument(inputFilePath);
-                                    Ea.Publish(new DocumentLoadedEventModel() { Document = doc });
+                                    Ea.Publish(new DocumentLoadedEventModel() { Data = doc });
                                 }
                                 break;
                             case ".docx":
                                 using (var reader = new ServiceReaderDocx())
                                 {
                                     var doc = reader.LoadDocument(inputFilePath);
-                                    Ea.Publish(new DocumentLoadedEventModel() { Document = doc });
+                                    Ea.Publish(new DocumentLoadedEventModel() { Data = doc });
                                 };
                                 break;
                             case ".jpg":

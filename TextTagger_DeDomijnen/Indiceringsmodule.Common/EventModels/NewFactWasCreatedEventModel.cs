@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Indiceringsmodule.Common.DocumentObject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace Indiceringsmodule.Common.EventModels
 {
-    public class DocumentLoadedEventModel
+    public class NewFactWasCreatedEventModel
     {
-        public FlowDocument Data { get; set; }
+        public Fact Data { get; set; }
     }
 }

@@ -7,8 +7,9 @@ using System.Windows.Documents;
 
 namespace Indiceringsmodule.Common.EventModels
 {
-    public class DocumentLoadedEventModel
+    public class SelectedFactChangedEventModel
     {
         public FlowDocument Data { get; set; }
+        public Enums.direction Direction { get; set; }
     }
 }

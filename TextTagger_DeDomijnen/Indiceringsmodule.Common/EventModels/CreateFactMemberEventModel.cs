@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace Indiceringsmodule.Common.EventModels
 {
-    public class DocumentLoadedEventModel
+    public class CreateFactMemberEventModel
     {
-        public FlowDocument Data { get; set; }
+        public FactMemberCreationData Data { get; set; }
     }
 }

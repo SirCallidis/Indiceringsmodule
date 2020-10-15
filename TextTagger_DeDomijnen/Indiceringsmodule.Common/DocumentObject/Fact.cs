@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using System.Windows.Markup;
 
 namespace Indiceringsmodule.Common.DocumentObject
 {
@@ -57,10 +58,15 @@ namespace Indiceringsmodule.Common.DocumentObject
 
         #region Default Constructor
 
-        public Fact(int id)
+        public Fact(int id, string selection)
         {
+            if (id < 0) throw new ArgumentOutOfRangeException($"*ID number cannot be a negative number. {id}");
             _ID = id;
             FactDocument = new FlowDocument();
+
+            var p = new Paragraph();
+            p.Inlines.Add(selection);
+            FactDocument.Blocks.Add(p);
         }
 
         #endregion

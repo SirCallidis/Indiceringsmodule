@@ -72,7 +72,7 @@ namespace Indiceringsmodule.Presentation
         #region Command Methods - Menu_SaveFile
 
         /// <summary>
-        /// Method that may need to check wether the Save File window can be opened.
+        /// Method that may need to check whether the Save File window can be opened.
         /// currently inactive. Returning true by default.
         /// </summary>
         /// <returns></returns>

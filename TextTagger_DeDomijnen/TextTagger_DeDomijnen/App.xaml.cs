@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
@@ -15,16 +16,28 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace Indiceringsmodule
 {
-    public partial class App : Application
-    {   
+    public partial class App : System.Windows.Application
+    {
+        private static string Path  { get; set; }
+        private static string RootPath  { get; set; }
+        private static string LanguagePath { get; set; }
+        private static ResXResourceSet LangResource { get; set; }
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);            
+            base.OnStartup(e);
+
+            Path = AppDomain.CurrentDomain.BaseDirectory;
+            RootPath = new DirectoryInfo(Path).Parent.Parent.Parent.FullName;
+            LanguagePath = RootPath + @"\Indiceringsmodule.Language";
+            
+            SetLanguageDictionary();
             ComposeObjects();
-            SetLanguageDictionary();            
+                        
             Current.MainWindow.Show();
         }
 
@@ -35,6 +48,8 @@ namespace Indiceringsmodule
             //Set CurrentView to imtv
             //disable MainWindowView xaml bindings
             //set MainWindowView.xaml's Contentcontrol to CurrentView
+            var rm = new ResourceManager((LanguagePath + @"\Resources"), Assembly.GetExecutingAssembly());
+            // var x = rm.GetString("MenuLoad"); //breaks because Resx file needs to be converted to .Resources
 
             var ea = new EventAggregator();
             var fileLoader = new FileLoader(ea);
@@ -44,7 +59,7 @@ namespace Indiceringsmodule
             var imtv = new IndiceringsmoduleView(ea) { DataContext = imtvm };
             
             new ViewModelCoupler(ea);
-            var viewModel = new MainWindowViewModel(ea, menu)
+            var viewModel = new MainWindowViewModel(ea, menu, LangResource)
             {
                 CurrentView = imtv
             };
@@ -58,15 +73,19 @@ namespace Indiceringsmodule
             {
                 case "nl-NL":
                     Language.Resources.Culture = new CultureInfo("nl-NL");
+                    LangResource = new ResXResourceSet(LanguagePath + @"\Resource.nl-NL.resx");
                     break;
                 case "en-NL":
                     Language.Resources.Culture = new CultureInfo("en-NL");
+                    LangResource = new ResXResourceSet(LanguagePath + @"\Resources.resx");
                     break;
                 case "en-GB":
                     Language.Resources.Culture = new CultureInfo("en-GB");
+                    LangResource = new ResXResourceSet(LanguagePath + @"\Resources.resx");
                     break;
                 default:
                     Language.Resources.Culture = new CultureInfo("en-GB");
+                    LangResource = new ResXResourceSet(LanguagePath + @"\Resources.resx");
                     break;
             }
         }

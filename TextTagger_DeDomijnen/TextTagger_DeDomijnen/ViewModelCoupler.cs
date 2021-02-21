@@ -30,14 +30,24 @@ namespace Indiceringsmodule
             switch (type.Name)
             {
                 case "PopUpOptionsViewModel":
-                    var popUpOptionsView = new PopUpOptions(Ea);
-                    popUpOptionsView.DataContext = input;
+                    var popUpOptionsView = new PopUpOptions(Ea) { DataContext = input };
                     Ea.Publish(new ProvidingViewForViewModelEventModel() { Data = popUpOptionsView });
                     break;
                 case "EditDocSettingsViewModel":
-                    var editDocSettingsView = new EditDocSettings(Ea);
-                    editDocSettingsView.DataContext = input;
+                    var editDocSettingsView = new EditDocSettings(Ea) { DataContext = input };
                     Ea.Publish(new ProvidingViewForViewModelEventModel() { Data = editDocSettingsView });
+                    break;
+                case "Person":
+                    var editPersonView = new EditPersonFactMember { DataContext = input };
+                    Ea.Publish(new ProvidingViewForFactMemberEventModel() { Data = editPersonView });
+                    break;
+                case "RealEstate":
+                    var editRealEstateView = new EditRealEstateFactMember { DataContext = input };
+                    Ea.Publish(new ProvidingViewForFactMemberEventModel() { Data = editRealEstateView });
+                    break;
+                case "Chattel":
+                    var editChattelView = new EditChattelFactMember() { DataContext = input };
+                    Ea.Publish(new ProvidingViewForFactMemberEventModel() { Data = editChattelView });
                     break;
                 default:
                     throw new ArgumentException($"Cannot find corresponding view. {type.Name}");

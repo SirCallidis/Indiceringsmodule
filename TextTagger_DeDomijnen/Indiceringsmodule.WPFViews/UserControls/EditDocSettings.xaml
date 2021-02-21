@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Indiceringsmodule.WPFViews.UserControls"
+             xmlns:lang="clr-namespace:Indiceringsmodule.Language;assembly=Indiceringsmodule.Language"
              mc:Ignorable="d" 
-             Height="300" Width="600"
+             Height="Auto" Width="600"
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
@@ -22,29 +23,28 @@
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="0" Content="*Field Name"/>
-            <Label Grid.Row="1" Content="*SourceID"/>
-            <Label Grid.Row="2" Content="*ADACode"/>
-            <Label Grid.Row="3" Content="*Location"/>
-            <Label Grid.Row="4" Content="*LocationCode"/>
-            <Label Grid.Row="5" Content="*Municipality"/>
-            <Label Grid.Row="6" Content="*SourceType"/>
-            <Label Grid.Row="7" Content="*FactType"/>
-            <Label Grid.Row="8" Content="*FactSubType"/>
+            <Label Grid.Row="0" Content="{x:Static lang:Resources.DocumentContext}"/>
+            <Label Grid.Row="1" Content="{x:Static lang:Resources.SourceID}"/>
+            <Label Grid.Row="2" Content="{x:Static lang:Resources.ADACode}"/>
+            <Label Grid.Row="3" Content="{x:Static lang:Resources.Location}"/>
+            <Label Grid.Row="4" Content="{x:Static lang:Resources.LocationCode}"/>
+            <Label Grid.Row="5" Content="{x:Static lang:Resources.Municipality}"/>
+            <Label Grid.Row="6" Content="{x:Static lang:Resources.SourceType}"/>
+            <Label Grid.Row="7" Content="{x:Static lang:Resources.FactType}"/>
+            <Label Grid.Row="8" Content="{x:Static lang:Resources.FactSubType}"/>
 
-            <Label Grid.Row="0" Grid.Column="1" Content="*Value"/>
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Settings.SourceID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Settings.ADACode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Settings.Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -54,7 +54,7 @@
             <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Settings.FactType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Settings.FactSubType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Button Grid.Row="9" Grid.Column="1" HorizontalAlignment="Right" Content="*Close" Command="{Binding ClosePopUp}"/>
+            <Button Grid.Row="9" Grid.Column="1" HorizontalAlignment="Right" Content="{x:Static lang:Resources.Close}" Command="{Binding ClosePopUp}"/>
         </Grid>
     </Border>
 </UserControl>

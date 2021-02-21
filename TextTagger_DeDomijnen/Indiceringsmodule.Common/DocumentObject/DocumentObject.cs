@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 
@@ -118,6 +119,26 @@ namespace Indiceringsmodule.Common.DocumentObject
                 return true;
             }
         }
+
+        public DocumentObjectValidationFindings Validate()
+        {
+            var docObVal = new DocumentObjectValidationFindings();
+            foreach (var fact in TotalFacts)
+            {
+                var findings = fact.Validate();
+                if (!findings.allGreen)
+                {
+                    docObVal.nonGreenFactsFindings.Add(findings);
+                }
+            }
+            if (docObVal.nonGreenFactsFindings.Count == 0)
+            {
+                docObVal.allGreen = true;
+                return docObVal;
+            }
+            return docObVal;
+        }
+        
 
         #endregion
     }

@@ -43,14 +43,8 @@ namespace Indiceringsmodule
 
         private static void ComposeObjects()
         {
-            //create var imtv IndiceringsmoduleTestView with ea (change imtv ctor to accept ea)
-            //change MainWindowViewModel.CurrentViewModel to CurrentView
-            //Set CurrentView to imtv
-            //disable MainWindowView xaml bindings
-            //set MainWindowView.xaml's Contentcontrol to CurrentView
             var rm = new ResourceManager((LanguagePath + @"\Resources"), Assembly.GetExecutingAssembly());
-            // var x = rm.GetString("MenuLoad"); //breaks because Resx file needs to be converted to .Resources
-
+            //var x = rm.GetString("MenuLoad"); //breaks because Resx file needs to be converted to .Resources
             var ea = new EventAggregator();
             var fileLoader = new FileLoader(ea);
             var fileSaver = new FileSaver(ea);

@@ -70,6 +70,159 @@ namespace Indiceringsmodule.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        public static string Add {
+            get {
+                return ResourceManager.GetString("Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Additional Names.
+        /// </summary>
+        public static string AddlNames {
+            get {
+                return ResourceManager.GetString("AddlNames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chattel.
+        /// </summary>
+        public static string Chattel {
+            get {
+                return ResourceManager.GetString("Chattel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string Close {
+            get {
+                return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create Fact.
+        /// </summary>
+        public static string CreateFact {
+            get {
+                return ResourceManager.GetString("CreateFact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create Fact Member.
+        /// </summary>
+        public static string CreateFactMember {
+            get {
+                return ResourceManager.GetString("CreateFactMember", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Currency.
+        /// </summary>
+        public static string Currency {
+            get {
+                return ResourceManager.GetString("Currency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Designation or Title.
+        /// </summary>
+        public static string DesignationOrTitle {
+            get {
+                return ResourceManager.GetString("DesignationOrTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Details.
+        /// </summary>
+        public static string Details {
+            get {
+                return ResourceManager.GetString("Details", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fact with ID {0} was missing a link named &apos;{1}&apos;. It was recreated at the end of the document..
+        /// </summary>
+        public static string DictHasMessage1 {
+            get {
+                return ResourceManager.GetString("DictHasMessage1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to several facts are missing their links: {0}..
+        /// </summary>
+        public static string DictHasMessage2 {
+            get {
+                return ResourceManager.GetString("DictHasMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Document Context.
+        /// </summary>
+        public static string DocumentContext {
+            get {
+                return ResourceManager.GetString("DocumentContext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The link(s) named {0} appear(s) more than once..
+        /// </summary>
+        public static string DuplicatesMessage {
+            get {
+                return ResourceManager.GetString("DuplicatesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Document Settings.
+        /// </summary>
+        public static string EditDocSettings {
+            get {
+                return ResourceManager.GetString("EditDocSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fact.
+        /// </summary>
+        public static string Fact {
+            get {
+                return ResourceManager.GetString("Fact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fact Member.
+        /// </summary>
+        public static string FactMember {
+            get {
+                return ResourceManager.GetString("FactMember", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fact Subtype.
         /// </summary>
         public static string FactSubType {
@@ -84,6 +237,69 @@ namespace Indiceringsmodule.Language {
         public static string FactType {
             get {
                 return ResourceManager.GetString("FactType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File.
+        /// </summary>
+        public static string File {
+            get {
+                return ResourceManager.GetString("File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First Name.
+        /// </summary>
+        public static string FirstName {
+            get {
+                return ResourceManager.GetString("FirstName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Images.
+        /// </summary>
+        public static string Images {
+            get {
+                return ResourceManager.GetString("Images", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last Name.
+        /// </summary>
+        public static string LastName {
+            get {
+                return ResourceManager.GetString("LastName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The link: &apos;{0}&apos; in fact number: {1} is not paired to any fact member. please remove it..
+        /// </summary>
+        public static string ListHasMessage1 {
+            get {
+                return ResourceManager.GetString("ListHasMessage1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to several links are not paired to fact members: {0}. Please remove these..
+        /// </summary>
+        public static string ListHasMessage2 {
+            get {
+                return ResourceManager.GetString("ListHasMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Load.
+        /// </summary>
+        public static string Load {
+            get {
+                return ResourceManager.GetString("Load", resourceCulture);
             }
         }
         
@@ -106,74 +322,20 @@ namespace Indiceringsmodule.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit.
+        ///   Looks up a localized string similar to Hyperlink &apos;{0}&apos; in fact {1} does not match up with any fact member..
         /// </summary>
-        public static string MenuEdit {
+        public static string MismatchMessage1 {
             get {
-                return ResourceManager.GetString("MenuEdit", resourceCulture);
+                return ResourceManager.GetString("MismatchMessage1", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit Document Settings.
+        ///   Looks up a localized string similar to The following hyperlinks do not match up to any fact members: {0}..
         /// </summary>
-        public static string MenuEditDocSettings {
+        public static string MismatchMessage2 {
             get {
-                return ResourceManager.GetString("MenuEditDocSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to File.
-        /// </summary>
-        public static string MenuFile {
-            get {
-                return ResourceManager.GetString("MenuFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Load.
-        /// </summary>
-        public static string MenuLoad {
-            get {
-                return ResourceManager.GetString("MenuLoad", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Options.
-        /// </summary>
-        public static string MenuOptions {
-            get {
-                return ResourceManager.GetString("MenuOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Quit.
-        /// </summary>
-        public static string MenuQuit {
-            get {
-                return ResourceManager.GetString("MenuQuit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Save.
-        /// </summary>
-        public static string MenuSave {
-            get {
-                return ResourceManager.GetString("MenuSave", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Tools.
-        /// </summary>
-        public static string MenuTools {
-            get {
-                return ResourceManager.GetString("MenuTools", resourceCulture);
+                return ResourceManager.GetString("MismatchMessage2", resourceCulture);
             }
         }
         
@@ -183,6 +345,150 @@ namespace Indiceringsmodule.Language {
         public static string Municipality {
             get {
                 return ResourceManager.GetString("Municipality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next Fact.
+        /// </summary>
+        public static string NextFact {
+            get {
+                return ResourceManager.GetString("NextFact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Image Selected.
+        /// </summary>
+        public static string NoImageSelected {
+            get {
+                return ResourceManager.GetString("NoImageSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to of.
+        /// </summary>
+        public static string Of {
+            get {
+                return ResourceManager.GetString("Of", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Options.
+        /// </summary>
+        public static string Options {
+            get {
+                return ResourceManager.GetString("Options", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Particle.
+        /// </summary>
+        public static string Particle {
+            get {
+                return ResourceManager.GetString("Particle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Person.
+        /// </summary>
+        public static string Person {
+            get {
+                return ResourceManager.GetString("Person", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous Fact.
+        /// </summary>
+        public static string PreviousFact {
+            get {
+                return ResourceManager.GetString("PreviousFact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quit.
+        /// </summary>
+        public static string Quit {
+            get {
+                return ResourceManager.GetString("Quit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Real Estate.
+        /// </summary>
+        public static string RealEstate {
+            get {
+                return ResourceManager.GetString("RealEstate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remark.
+        /// </summary>
+        public static string Remark {
+            get {
+                return ResourceManager.GetString("Remark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove.
+        /// </summary>
+        public static string Remove {
+            get {
+                return ResourceManager.GetString("Remove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restored Hyperlink: .
+        /// </summary>
+        public static string RestoredHyperlink {
+            get {
+                return ResourceManager.GetString("RestoredHyperlink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Role.
+        /// </summary>
+        public static string Role {
+            get {
+                return ResourceManager.GetString("Role", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string Save {
+            get {
+                return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save As.
+        /// </summary>
+        public static string SaveAs {
+            get {
+                return ResourceManager.GetString("SaveAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Size.
+        /// </summary>
+        public static string Size {
+            get {
+                return ResourceManager.GetString("Size", resourceCulture);
             }
         }
         
@@ -201,6 +507,51 @@ namespace Indiceringsmodule.Language {
         public static string SourceType {
             get {
                 return ResourceManager.GetString("SourceType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tools.
+        /// </summary>
+        public static string Tools {
+            get {
+                return ResourceManager.GetString("Tools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toponym.
+        /// </summary>
+        public static string Toponym {
+            get {
+                return ResourceManager.GetString("Toponym", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transcription.
+        /// </summary>
+        public static string Transcription {
+            get {
+                return ResourceManager.GetString("Transcription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        public static string Type {
+            get {
+                return ResourceManager.GetString("Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Worth.
+        /// </summary>
+        public static string Worth {
+            get {
+                return ResourceManager.GetString("Worth", resourceCulture);
             }
         }
     }

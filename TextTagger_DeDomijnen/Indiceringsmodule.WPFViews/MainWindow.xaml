@@ -7,18 +7,12 @@
         xmlns:lang="clr-namespace:Indiceringsmodule.Language;assembly=Indiceringsmodule.Language"
         xmlns:presentation="clr-namespace:Indiceringsmodule.Presentation;assembly=Indiceringsmodule.Presentation"
         mc:Ignorable="d"
-        Title="MainWindow" Height="768" Width="1366" MinHeight="720" MinWidth="1280">
-
-    <!--<Window.Resources>
-        <DataTemplate DataType="{x:Type presentation:IndiceringsmoduleTestViewModel}">
-            <local:IndiceringsmoduleTestView/>
-        </DataTemplate>
-    </Window.Resources>-->
+        Title="Indiceringsmodule" Height="768" Width="1366" MinHeight="720" MinWidth="1280">
 
     <Grid IsEnabled="{Binding ContentEnabled}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" MaxHeight="1000"/>
         </Grid.RowDefinitions>
 
         <Popup Placement="Center" Grid.Row="0" Grid.RowSpan="2" IsOpen="{Binding PopUpVisible}" AllowsTransparency="True">
@@ -26,19 +20,20 @@
         </Popup>
 
         <Menu Grid.Row="0">
-            <MenuItem Header="{x:Static lang:Resources.MenuFile}">
-                <MenuItem Header="{x:Static lang:Resources.MenuLoad}" Command="{Binding Menu_LoadFile}"/>
-                <MenuItem Header="{x:Static lang:Resources.MenuSave}" Command="{Binding Menu_SaveFile}"/>
-                <MenuItem Header="{x:Static lang:Resources.MenuQuit}" Command="{Binding Menu_CloseFile}"/>
+            <MenuItem Header="{x:Static lang:Resources.File}">
+                <MenuItem Header="{x:Static lang:Resources.Load}" Command="{Binding Menu_LoadFile}"/>
+                <MenuItem Header="{x:Static lang:Resources.Save}" Command="{Binding Menu_SaveFile}"/>
+                <MenuItem Header="{x:Static lang:Resources.Quit}" Command="{Binding Menu_CloseFile}"/>
             </MenuItem>
-            <MenuItem Header="{x:Static lang:Resources.MenuEdit}">
-                <MenuItem Header="{x:Static lang:Resources.MenuEditDocSettings}" Command="{Binding Menu_EditDocSettings}"/>
+            <MenuItem Header="{x:Static lang:Resources.Edit}">
+                <MenuItem Header="{x:Static lang:Resources.EditDocSettings}" Command="{Binding Menu_EditDocSettings}"/>
             </MenuItem>
-            <MenuItem Header="{x:Static lang:Resources.MenuTools}">
-                <MenuItem Header="{x:Static lang:Resources.MenuOptions}" Command="{Binding Menu_OptionsPopUp}"/>
+            <MenuItem Header="{x:Static lang:Resources.Tools}">
+                <MenuItem Header="{x:Static lang:Resources.Options}" Command="{Binding Menu_OptionsPopUp}"/>
             </MenuItem>
         </Menu>
-
-        <ContentControl Grid.Row="1" Content="{Binding CurrentView}"/>
+        <ScrollViewer Grid.Row="1">
+            <ContentControl Content="{Binding CurrentView}"/>
+        </ScrollViewer>
     </Grid>
 </Window>

@@ -68,8 +68,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="UserControls\EditChattelFactMember.xaml.cs">
+      <DependentUpon>EditChattelFactMember.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\EditDocSettings.xaml.cs">
       <DependentUpon>EditDocSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\EditPersonFactMember.xaml.cs">
+      <DependentUpon>EditPersonFactMember.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\EditRealEstateFactMember.xaml.cs">
+      <DependentUpon>EditRealEstateFactMember.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\PopUpOptions.xaml.cs">
       <DependentUpon>PopUpOptions.xaml</DependentUpon>
@@ -104,7 +113,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\EditChattelFactMember.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\EditDocSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\EditPersonFactMember.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\EditRealEstateFactMember.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

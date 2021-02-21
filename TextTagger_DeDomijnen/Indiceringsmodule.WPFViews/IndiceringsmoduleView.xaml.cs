@@ -1,6 +1,7 @@
 ﻿using Indiceringsmodule.Common;
 using Indiceringsmodule.Common.DocumentObject;
 using Indiceringsmodule.Common.EventModels;
+using Indiceringsmodule.Common.Extensions;
 using Indiceringsmodule.DataAccess;
 using Indiceringsmodule.Presentation;
 using System;
@@ -11,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,7 +48,7 @@ namespace Indiceringsmodule.WPFViews
         {
             Ea = ea;
             InitializeComponent();
-            DataObject.AddPastingHandler(this, OnPaste);
+            //DataObject.AddPastingHandler(this, OnPaste);
             SetRichTBTextSettings(transcriptionRichTB.Document);
             CurrentFactRTB = CreateNewFactRTB();
             SetRichTBTextSettings(CurrentFactRTB.Document);            
@@ -56,7 +58,8 @@ namespace Indiceringsmodule.WPFViews
             Subscriptions.Add(Ea.Subscribe<DocumentLoadedEventModel>(m => LoadedFlowDocumentReceived(m.Data)));
             Subscriptions.Add(Ea.Subscribe<PublishFactEventModel>(m => UpdateUIOnFactReceived(m.Data)));
             Subscriptions.Add(Ea.Subscribe<NewFactWasCreatedEventModel>(m => OnNewFactCreated(m.Data)));
-
+            Subscriptions.Add(Ea.Subscribe<ProvidingViewForFactMemberEventModel>(m => ResolveView(m.Data)));
+            Subscriptions.Add(Ea.Subscribe<RetrieveDocsFromViewEventModel>(m => AddFlowDocumentsToDocumentObject(m.Data)));
             FactDocumentUIs = new Dictionary<int, RichTextBox>();
         }
 
@@ -92,6 +95,7 @@ namespace Indiceringsmodule.WPFViews
         /// Block and Paragraph with the new large string in it.
         /// </summary>
         /// <param name="doc"></param>
+        [Obsolete]
         private void PutAllTextInOneBlock(FlowDocument doc)
         {
             if (doc == null) throw new ArgumentNullException("Document cannot be null!");
@@ -122,7 +126,7 @@ namespace Indiceringsmodule.WPFViews
         private void LoadedFlowDocumentReceived(FlowDocument data)
         {
             transcriptionRichTB.Document.Blocks.AddRange(data.Blocks.ToList());
-            PutAllTextInOneBlock(transcriptionRichTB.Document);
+            PutAllTextInOneBlock(transcriptionRichTB.Document); //no longer needed: using LineBreaks instead of /r/n !
             SetRichTBTextSettings(transcriptionRichTB.Document);
         }
 
@@ -136,7 +140,7 @@ namespace Indiceringsmodule.WPFViews
         {
             Ea.Publish(new SelectedFactChangedEventModel()
             {
-                Data = transcriptionRichTB.Document,
+                Data = RetrieveFactDocumentFromView(),
                 Direction = Enums.direction.next,
             });
         }
@@ -151,8 +155,73 @@ namespace Indiceringsmodule.WPFViews
         {
             Ea.Publish(new SelectedFactChangedEventModel()
             {
-                Data = transcriptionRichTB.Document,
+                Data = RetrieveFactDocumentFromView(),
                 Direction = Enums.direction.previous,
+            });
+        }
+
+        /// <summary>
+        /// Returns the FlowDocument currently displayed on the View.
+        /// Should this be null, will return a new empty FlowDocument.
+        /// </summary>
+        /// <returns></returns>
+        private FlowDocument RetrieveFactDocumentFromView()
+        {
+            FlowDocument data;
+            if (RTBDisplayer.Content == null)
+            {
+                data = new FlowDocument();
+            }
+            else
+            {
+                var rtbContent = RTBDisplayer.Content as RichFactTextBox;
+                data = rtbContent.Document;
+            }
+            return data;
+        }
+
+        /// <summary>
+        /// Determines whether to handle the PrevKeyDown method on either
+        /// the RichTextBox, or RichFactTextBox.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RTB_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (sender.GetType() == typeof(RichTextBox))
+            {
+                var rtb = sender as RichTextBox;
+                rtb.PrevKeyDown(e);
+            }
+            if (sender.GetType() == typeof(RichFactTextBox))
+            {
+                var rftb = sender as RichFactTextBox;
+                rftb.PrevKeyDown(rftb, e);
+            }
+        }
+
+        private void ResolveView(UserControl data)
+        {
+            FactMemberDisplayer.Content = data;
+        }
+
+        /// <summary>
+        /// Sets the view's edited documents: transcription document and
+        /// each of the fact's documents, to the correct properties of the
+        /// ViewModel's DocumentObject.
+        /// </summary>
+        /// <param name="docOb"></param>
+        private void AddFlowDocumentsToDocumentObject(DocumentObject docOb)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                docOb.TranscriptionDocument = transcriptionRichTB.Document;
+                for (int i = 0; i < FactDocumentUIs.Count; i++)
+                {
+                    var rtb = FactDocumentUIs[i];
+                    docOb.TotalFacts[i].FactDocument = rtb.Document;
+                }
+                Ea.Publish(new PublishDocumentEventModel() { Data = docOb });
             });
         }
 
@@ -244,45 +313,49 @@ namespace Indiceringsmodule.WPFViews
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnPaste(object sender, DataObjectPastingEventArgs e)
-        {
-            if (transcriptionRichTB.IsFocused == true)
-            {
-                string pastingText = e.DataObject.GetData(DataFormats.Text) as string;
-                transcriptionRichTB.Document.ContentEnd.InsertTextInRun(pastingText);
-                e.CancelCommand();
-            }
-            if (CurrentFactRTB.IsFocused == true)
-            {
-                string pastingText = e.DataObject.GetData(DataFormats.Text) as string;
-                CurrentFactRTB.Document.ContentEnd.InsertTextInRun(pastingText);
-                e.CancelCommand();
-            }
-            else
-            {
-                transcriptionRichTB.Focus();
-            }
+        //private void OnPaste(object sender, DataObjectPastingEventArgs e)
+        //{
+        //    if (transcriptionRichTB.IsFocused == true)
+        //    {
+        //        var caret = transcriptionRichTB.CaretPosition;
+        //        var selection = e.DataObject.GetData(DataFormats.Xaml);
+        //        string pastingText = e.DataObject.GetData(DataFormats.Text) as string;
+        //        var lines = Regex.Split(pastingText, "\r\n").ToArray();
+        //        //lines.Reverse(); //<== if contains linebreak, no reverse, else, reverse!
+        //        for (int i = lines.Length; i > 0; i--)
+        //        {
+        //            caret.InsertTextInRun(lines[i - 1] + " ");
+        //        }
+        //        //if (pastingText.Substring(0, 4) == "\r\n")
+        //        //{
+        //        //    transcriptionRichTB.CaretPosition.InsertLineBreak();
+        //        //}
+        //        //foreach (var line in lines)
+        //        //{
+        //        //    caret.InsertTextInRun(line + " ");
+        //        //}
+        //        e.CancelCommand();
+        //    }
+        //    if (CurrentFactRTB.IsFocused == true)
+        //    {
+        //        string pastingText = e.DataObject.GetData(DataFormats.Text) as string;
+        //        var lines = Regex.Split(pastingText, "\r\n").ToList();
+        //        var p = CurrentFactRTB.Document.ContentStart.Paragraph ?? new Paragraph();
+        //        foreach (var line in lines)
+        //        {
+        //            var run = new Run(line);
+        //            p.Inlines.Add(run);
+        //            p.Inlines.Add(new LineBreak());
+        //        }
+        //        CurrentFactRTB.Document.Blocks.Add(p);
+        //        e.CancelCommand();
+        //    }
+        //    else
+        //    {
+        //        transcriptionRichTB.Focus();
+        //    }
 
-        }
-
-        /// <summary>
-        /// Logic that enables or disables the CreateObject button
-        /// based on whether text is selected in the richtextbox.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void FactRichTB_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            var selection = CurrentFactRTB.Selection;
-            if (selection.IsEmpty == false)
-            {
-                CreateFactMemberButton.IsEnabled = true;
-            }
-            else
-            {
-                CreateFactMemberButton.IsEnabled = false;
-            }
-        }
+        //}
 
         /// <summary>
         /// sets the factRichTB UI element to display the factDocument variable
@@ -311,22 +384,23 @@ namespace Indiceringsmodule.WPFViews
             
             CurrentFactRTB = FactDocumentUIs.Where(x => x.Key == fact.ID).Select(x => x.Value).First();
             RTBDisplayer.Content = CurrentFactRTB;
+            SetRichTBTextSettings(CurrentFactRTB.Document);
         }
 
         /// <summary>
-        /// Creates a new RichTextBox with
+        /// Creates a new RichFactTextBox with
         /// hardcoded settings
         /// </summary>
         /// <returns></returns>
-        private RichTextBox CreateNewFactRTB()
+        private RichFactTextBox CreateNewFactRTB()
         {
-            var rtb = new RichTextBox
+            var rtb = new RichFactTextBox(Ea)
             {
                 IsEnabled = true,
                 Padding = new Thickness(5),
             };
-            rtb.SelectionChanged += FactRichTB_SelectionChanged;
-            //TODO: look at if RTB style is needed
+            rtb.IsDocumentEnabled = true;
+            rtb.PreviewKeyDown += RTB_PreviewKeyDown;
             return rtb;
         }
 
@@ -393,10 +467,6 @@ namespace Indiceringsmodule.WPFViews
         /// </summary>
         private void SignalCreateFact()
         {
-            //if (TotalFactsLabel.Text != "0") //probably not needed as diff. RTB's are stored in memory
-            //{                                //if that is the case: also remove followup from VM. 
-            //    Ea.Publish(new SaveCurrentFactDocumentToFact() { Data = CurrentFactRTB.Document });
-            //}
             var selection = transcriptionRichTB.Selection.Text;
             Ea.Publish(new CreateFactEventModel() { Data = selection });
         }
@@ -422,37 +492,55 @@ namespace Indiceringsmodule.WPFViews
         /// <returns></returns>
         private bool CanCreateFactMember()
         {
-            var selection = CurrentFactRTB.Selection.Text;
-            if (selection.Length < 1) throw new ArgumentOutOfRangeException($"*Selection is too short. {selection}");
-            if (selection.Length > 50) throw new ArgumentOutOfRangeException($"*Selection is too long. {selection}");
-            
-            var isSelectionNullOrEmpty = string.IsNullOrEmpty(selection);
-            if (isSelectionNullOrEmpty)
+            //could be refactored to go into RichTextBoxExtensions,
+            //needs a global MessageBoxEvent first
+            var rtb = (RichTextBox)RTBDisplayer.Content;
+            if (rtb != null)
             {
-                return false;
+                var selection = rtb.Selection.Text;
+                if (selection == "")
+                {
+                    MessageBox.Show("*nothing was selected.");
+                    return false;
+                }
+
+                if (selection.Length < 1) throw new ArgumentOutOfRangeException($"*Selection is too short. {selection}");
+                if (selection.Length > 50) throw new ArgumentOutOfRangeException($"*Selection is too long. {selection}");
+
+                if (FactMemberSelector.SelectedItem == null)
+                {
+                    MessageBox.Show("*Must select the type of Fact Member first!");
+                    return false;
+                }
+
+                var isSelectionNullOrEmpty = string.IsNullOrEmpty(selection);
+                if (isSelectionNullOrEmpty)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
-            else
-            {
-                return true;
-            }
+            return false;
         }
 
+        /// <summary>
+        /// Takes care of leading and trailing whitespaces, then calls
+        /// Hyperlink creation based on whether Selection has a line ending in it.
+        /// </summary>
         private void SignalCreateFactMember()
         {
-            var factMemberCreationData = new FactMemberCreationData
-            {
-                CurrentFact = CurrentFactRTB.Document,
-                Selection = CurrentFactRTB.Selection.Text,
-                ChosenType = FactMemberSelector.SelectedItem.ToString(),
-            };
-            //TODO this method may already need to parse the data.
-            //What if Selection appears multiple times in document text?
-            Ea.Publish(new CreateFactMemberEventModel() { Data = factMemberCreationData});
-            
-            //on VM:
-            //cut sentence in 3 parts on selection
-            //make a hlink out of selection(middle part)
-            //create new FactMember of chosen type with key: selection
+            var currentFactRTB = (RichFactTextBox)RTBDisplayer.Content;
+
+            currentFactRTB.CropSelectionWhitespace();
+
+            var isMultiLine = currentFactRTB.Selection.Text.Contains("\r\n");
+            currentFactRTB.CreateHyperlink( currentFactRTB, 
+                                            isMultiLine, 
+                                            FactMemberSelector.SelectedItem.ToString(), 
+                                            currentFactRTB.Document);
         }
 
         #endregion
@@ -487,7 +575,7 @@ namespace Indiceringsmodule.WPFViews
             Run run3 = new Run("Link Text.");
 
             Hyperlink hLink = new Hyperlink(run3);
-            hLink.Click += HLink_Click;
+            //hLink.Click += HLink_Click;
             //for actual web hyperlinks:
             //hLink.RequestNavigate += HLink_RequestNavigate;
             //hLink.NavigateUri = new Uri("http://search.msn.com");
@@ -530,21 +618,6 @@ namespace Indiceringsmodule.WPFViews
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
-        }
-
-        private void HLink_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            MessageBox.Show("Hyperlink was clicked");
-        }
-
-        private void GetRichTextBoxSpecsButton_Click(object sender, RoutedEventArgs e)
-        {
-            var doc = CurrentFactRTB.Document;
-            var numberOfBlocks = doc.Blocks.Count();
-            var content = new TextRange(doc.ContentStart, doc.ContentEnd).Text;
-
-            //below: works :D sets all content to bold
-            //doc.FontWeight = FontWeights.Bold;
         }
 
         /// <summary>

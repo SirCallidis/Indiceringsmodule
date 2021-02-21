@@ -120,11 +120,83 @@
   <data name="ADACode" xml:space="preserve">
     <value>ADA Code</value>
   </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AddlNames" xml:space="preserve">
+    <value>Additional Names</value>
+  </data>
+  <data name="Chattel" xml:space="preserve">
+    <value>Chattel</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CreateFact" xml:space="preserve">
+    <value>Create Fact</value>
+  </data>
+  <data name="CreateFactMember" xml:space="preserve">
+    <value>Create Fact Member</value>
+  </data>
+  <data name="Currency" xml:space="preserve">
+    <value>Currency</value>
+  </data>
+  <data name="DesignationOrTitle" xml:space="preserve">
+    <value>Designation or Title</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="DictHasMessage1" xml:space="preserve">
+    <value>Fact with ID {0} was missing a link named '{1}'. It was recreated at the end of the document.</value>
+  </data>
+  <data name="DictHasMessage2" xml:space="preserve">
+    <value>several facts are missing their links: {0}.</value>
+  </data>
+  <data name="DocumentContext" xml:space="preserve">
+    <value>Document Context</value>
+  </data>
+  <data name="DuplicatesMessage" xml:space="preserve">
+    <value>The link(s) named {0} appear(s) more than once.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditDocSettings" xml:space="preserve">
+    <value>Edit Document Settings</value>
+  </data>
+  <data name="Fact" xml:space="preserve">
+    <value>Fact</value>
+  </data>
+  <data name="FactMember" xml:space="preserve">
+    <value>Fact Member</value>
+  </data>
   <data name="FactSubType" xml:space="preserve">
     <value>Fact Subtype</value>
   </data>
   <data name="FactType" xml:space="preserve">
     <value>Fact Type</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="Images" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="ListHasMessage1" xml:space="preserve">
+    <value>The link: '{0}' in fact number: {1} is not paired to any fact member. please remove it.</value>
+  </data>
+  <data name="ListHasMessage2" xml:space="preserve">
+    <value>several links are not paired to fact members: {0}. Please remove these.</value>
+  </data>
+  <data name="Load" xml:space="preserve">
+    <value>Load</value>
   </data>
   <data name="Location" xml:space="preserve">
     <value>Location</value>
@@ -132,37 +204,82 @@
   <data name="LocationCode" xml:space="preserve">
     <value>Location Code</value>
   </data>
-  <data name="MenuEdit" xml:space="preserve">
-    <value>Edit</value>
+  <data name="MismatchMessage1" xml:space="preserve">
+    <value>Hyperlink '{0}' in fact {1} does not match up with any fact member.</value>
   </data>
-  <data name="MenuEditDocSettings" xml:space="preserve">
-    <value>Edit Document Settings</value>
-  </data>
-  <data name="MenuFile" xml:space="preserve">
-    <value>File</value>
-  </data>
-  <data name="MenuLoad" xml:space="preserve">
-    <value>Load</value>
-  </data>
-  <data name="MenuOptions" xml:space="preserve">
-    <value>Options</value>
-  </data>
-  <data name="MenuQuit" xml:space="preserve">
-    <value>Quit</value>
-  </data>
-  <data name="MenuSave" xml:space="preserve">
-    <value>Save</value>
-  </data>
-  <data name="MenuTools" xml:space="preserve">
-    <value>Tools</value>
+  <data name="MismatchMessage2" xml:space="preserve">
+    <value>The following hyperlinks do not match up to any fact members: {0}.</value>
   </data>
   <data name="Municipality" xml:space="preserve">
     <value>Municipality</value>
+  </data>
+  <data name="NextFact" xml:space="preserve">
+    <value>Next Fact</value>
+  </data>
+  <data name="NoImageSelected" xml:space="preserve">
+    <value>No Image Selected</value>
+  </data>
+  <data name="Of" xml:space="preserve">
+    <value>of</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Particle" xml:space="preserve">
+    <value>Particle</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="PreviousFact" xml:space="preserve">
+    <value>Previous Fact</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>Quit</value>
+  </data>
+  <data name="RealEstate" xml:space="preserve">
+    <value>Real Estate</value>
+  </data>
+  <data name="Remark" xml:space="preserve">
+    <value>Remark</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RestoredHyperlink" xml:space="preserve">
+    <value>Restored Hyperlink: </value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SaveAs" xml:space="preserve">
+    <value>Save As</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
   </data>
   <data name="SourceID" xml:space="preserve">
     <value>Source ID</value>
   </data>
   <data name="SourceType" xml:space="preserve">
     <value>Source Type</value>
+  </data>
+  <data name="Tools" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="Toponym" xml:space="preserve">
+    <value>Toponym</value>
+  </data>
+  <data name="Transcription" xml:space="preserve">
+    <value>Transcription</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Worth" xml:space="preserve">
+    <value>Worth</value>
   </data>
 </root>

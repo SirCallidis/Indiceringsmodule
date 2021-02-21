@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace Indiceringsmodule.Common.DocumentObject
 {
@@ -53,28 +54,14 @@ namespace Indiceringsmodule.Common.DocumentObject
             set { SetProperty(ref _DesignationOrTitle, value); }
         }
 
-        private string _Remark;
-        public string Remark
-        {
-            get { return _Remark; }
-            set { SetProperty(ref _Remark, value); }
-        }
-
-        private ExpandoObject _Details;
-        public ExpandoObject Details
-        {
-            get { return _Details; }
-            set { SetProperty(ref _Details, value); }
-        }
-
         #endregion
 
         #region Default Constructor
 
-        public Person(int id, string linkSelection)
+        public Person(int id, Hyperlink link)
         {
             ID = id;
-            LinkSelection = linkSelection;
+            Link = link;
         }
 
         #endregion

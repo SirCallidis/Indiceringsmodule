@@ -2,6 +2,7 @@
 using Indiceringsmodule.Common.DocumentObject;
 using Indiceringsmodule.Common.EventModels;
 using Indiceringsmodule.DataAccess;
+using Indiceringsmodule.Language;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -60,12 +61,24 @@ namespace Indiceringsmodule.Presentation
             set { SetProperty(ref _SelectedFactNumber, value); }
         }
 
-        //the currently selected FactMember
-        private string _SelectedFactMember;
-        public string SelectedFactMember
+        //the name of the FactMember type selected from the dropbox
+        private string _SelectedFactMemberName;
+        public string SelectedFactMemberName
+        {
+            get { return _SelectedFactMemberName; }
+            set { SetProperty(ref _SelectedFactMemberName, value); }
+        }
+
+        //the currently selected FactMember (by hyperlink click or createNew)
+        private FactMember _SelectedFactMember;
+        public FactMember SelectedFactMember
         {
             get { return _SelectedFactMember; }
-            set { SetProperty(ref _SelectedFactMember, value); }
+            set
+            {
+                SetProperty(ref _SelectedFactMember, value);
+                Ea.Publish(new RequestViewForViewModelEventModel() { Data = value });
+            }
         }
 
         //list of possible FactMember type names which can be selected
@@ -112,6 +125,7 @@ namespace Indiceringsmodule.Presentation
         public RelayCommand Button_RemoveImage { get; private set; }
         public RelayCommand Button_SelectNextFact { get; private set; }
         public RelayCommand Button_SelectPreviousFact { get; private set; }
+        public RelayCommand Button_Save { get; private set; }
 
         #endregion
 
@@ -127,25 +141,28 @@ namespace Indiceringsmodule.Presentation
 
         private void WireUpForm()
         {
-            //Subscriptions.Add(Ea.Subscribe<DocumentLoadedEventModel>(m => DisplayNewCurrentDocument(m.Document)));
+            //Subscriptions.Add(Ea.Subscribe<DocumentLoadedEventModel>(m => DisplayNewCurrentDocument(m.Document))); //Loading file currently breaks due to much refactoring
             Subscriptions.Add(Ea.Subscribe<RequestDocumentForSavingEventModel>(m => MakeDocumentAvailable()));
             Subscriptions.Add(Ea.Subscribe<RequestDocSettingsEventModel>(m => MakeDocSettingsAvailable()));
             Subscriptions.Add(Ea.Subscribe<LoadedKVPairStringBitmapimageEventModel>(m => CompareLoadedImage(m.Data)));
             Subscriptions.Add(Ea.Subscribe<CreateFactEventModel>(m => CreateFact(m.Data)));
             Subscriptions.Add(Ea.Subscribe<SelectedFactChangedEventModel>(m => SelectedFactChanged(m.Data, m.Direction)));
-            Subscriptions.Add(Ea.Subscribe<SaveCurrentFactDocumentToFact>(m => SetInboundFactDocumentToFact(m.Data)));           
+            //Subscriptions.Add(Ea.Subscribe<SaveCurrentFactDocumentToFact>(m => SetInboundFactDocumentToFact(m.Data))); //no longer needed         
+            Subscriptions.Add(Ea.Subscribe<CreateFactMemberEventModel>(m => OnCreateFactMember(m.Data)));
+            Subscriptions.Add(Ea.Subscribe<HyperlinkClickedEventModel>(m => OnHyperlinkClicked(m.Data)));     
 
-            Button_CreateFactMember = new RelayCommand(OnCreateFactMember, CanCreateFactMember);
+            //Button_CreateFactMember = new RelayCommand(OnCreateFactMember, CanCreateFactMember); //may no longer be needed? View catches this
             Button_AddImage = new RelayCommand(OnAddImage, CanAddImage);
             Button_RemoveImage = new RelayCommand(OnRemoveImage, CanRemoveImage);
             Button_SelectNextFact = new RelayCommand(OnSelectNextFact, CanSelectNextFact);
             Button_SelectPreviousFact = new RelayCommand(OnSelectPreviousFact, CanSelectPreviousFact);
+            Button_Save = new RelayCommand(OnSave, CanSave);
 
             DocumentObject = new DocumentObject();
 
             //TODO - fix hardcoded list content
-            FactMembers = new List<string>() { "*Person", "*RealEstate", "*Chattel" };
-            ImageNameList = new ObservableCollection<string>() { "*<No Image Selected>" };
+            FactMembers = new List<string>() { Resources.Person, Resources.RealEstate, Resources.Chattel };
+            ImageNameList = new ObservableCollection<string>() { $"<{Resources.NoImageSelected}>" };
             
             SelectedImageName = ImageNameList[0];
         }
@@ -153,6 +170,68 @@ namespace Indiceringsmodule.Presentation
         #endregion
 
         #region General Methods
+
+        private bool CanSave()
+        {
+            return true;
+        }
+
+        private void OnSave()
+        {
+            var findings = DocumentObject.Validate();
+            if (findings.allGreen)
+            {
+                fileSaver.SaveFile();
+            }
+            else
+            {
+                DisplayFindings(findings);
+            }           
+        }
+
+        /// <summary>
+        /// Constructs and displays an error message based on the fields of the
+        /// provided parameter.
+        /// </summary>
+        /// <param name="findings"></param>
+        public void DisplayFindings(DocumentObjectValidationFindings findings)
+        {
+            var factMessages = new List<string>();
+            var duplicatesMessage = "";
+            var mismatchMessage = "";
+            var dictKeysHasMoreMessage = "";
+            var linkListHasMoreMessage = "";
+
+            foreach (var finding in findings.nonGreenFactsFindings)
+            {                
+                if (finding.areThereDuplicates)
+                {
+                    duplicatesMessage = finding.fact.ResolveDuplicatesMessage(finding);
+                }
+                if (finding.mismatch)
+                {
+                    mismatchMessage = finding.fact.ResolveMismatchMessage(finding);
+                }
+                if (finding.dictKeysHasMore)
+                {
+                    dictKeysHasMoreMessage = finding.fact.ResolveDictKeysHasMoreMessage(finding);                  
+                }
+                if (finding.linkListHasMore)
+                {
+                    linkListHasMoreMessage = finding.fact.ResolveLinkListHasMoreMessage(finding);
+                }
+                var factMessage = duplicatesMessage + mismatchMessage + dictKeysHasMoreMessage + linkListHasMoreMessage;
+                factMessages.Add(factMessage);
+            }
+
+            var sb = new StringBuilder();
+            for (int i = 0; i < factMessages.Count; i++)
+            {
+                sb.AppendLine(factMessages[i].ToString());
+            }
+            MessageBox.Show($"{sb}");
+        }
+
 
         /// <summary>
         /// Publishes an event that makes the instance of the Settings class
@@ -417,62 +496,70 @@ namespace Indiceringsmodule.Presentation
         /// selectedFact's FactDocument property.
         /// </summary>
         /// <param name="doc"></param>
-        private void SetInboundFactDocumentToFact(FlowDocument doc)
-        {
-            SelectedFact.FactDocument = doc;
-        }
+        //private void SetInboundFactDocumentToFact(FlowDocument doc)
+        //{
+        //    SelectedFact.FactDocument = doc;
+        //}
 
         /// <summary>
         /// Checks whether a new Fact Member can be created.
         /// Always returns true, may be a place holder for future logic.
         /// </summary>
         /// <returns></returns>
-        private bool CanCreateFactMember()
-        {
-            //validate selection?
-            return true;
-        }
+        //private bool CanCreateFactMember()
+        //{
+        //    //validate selection?
+        //    return true;
+        //}
 
-        private void OnCreateFactMember()
+        private void OnCreateFactMember(FactMemberCreationData data)
         {
-            //is fired by view codebehind
-            if (CanCreateFactMember())
+            if (data.ChosenType.Equals(Resources.Person))
             {
-                //event that asks for what the current selection is
-
-                //takes richTB.Selection from View
-                //checks if SelectedThing != null
-
-                string selection = "".Trim();
-
-                switch (SelectedFactMember)
-                {
-                    case "*Person":
-                        SelectedFact.CreatePerson(selection);
-                        break;
-                    case "*RealEstate":
-                        SelectedFact.CreateRealEstate(selection);
-                        break;
-                    case "*Chattel":
-                        SelectedFact.CreateChattel(selection);
-                        break;
-                    case null:
-                        MessageBox.Show("*Select a fact type first");
-                        break;
-                    default:
-                        throw new ArgumentException("Could not process input:" + SelectedFactMember);
-                }
+                SelectedFact.CreatePerson(data.Hyperlink);
+                SelectedFactMember = SelectedFact.GetFactMember(data.Hyperlink);
+            }
+            else if (data.ChosenType.Equals(Resources.RealEstate))
+            {
+                SelectedFact.CreateRealEstate(data.Hyperlink);
+                SelectedFactMember = SelectedFact.GetFactMember(data.Hyperlink);
+            }
+            else if (data.ChosenType.Equals(Resources.Chattel))
+            {
+                SelectedFact.CreateChattel(data.Hyperlink);
+                SelectedFactMember = SelectedFact.GetFactMember(data.Hyperlink);
+            }
+            else if(data.ChosenType == null)
+            {
+                MessageBox.Show("*Select a fact type first");
+            }
+            else
+            {
+                throw new ArgumentException("Could not process input:" + SelectedFactMemberName);
             }
         }
+
+        /// <summary>
+        /// Attempts to retrieve the FactMember associated
+        /// with the Hyperlink.
+        /// </summary>
+        /// <param name="data"></param>
+        private void OnHyperlinkClicked(Hyperlink data)
+        {
+            SelectedFactMember = SelectedFact.GetFactMember(data);
+        }
+
         #endregion
 
 
 
-
+        /// <summary>
+        /// Makes the DocumentObject available to the View so that it can
+        /// add its FlowDocuments to it.
+        /// </summary>
         private void MakeDocumentAvailable()
         {
-            //TODO - Needs work: this needs to return the whole DocObject
-            Ea.Publish(new PublishDocumentEventModel() { Data = DocumentObject });
+            Ea.Publish(new RetrieveDocsFromViewEventModel() { Data = DocumentObject });
         }
 
         private IEnumerable<Block> RemoveChildren(Block block)

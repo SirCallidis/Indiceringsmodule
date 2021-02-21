@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace Indiceringsmodule.Common.DocumentObject
 {
@@ -52,21 +53,14 @@ namespace Indiceringsmodule.Common.DocumentObject
             set { SetProperty(ref _Valuta, value); }
         }
 
-        private string _Remark;
-        public string Remark
-        {
-            get { return _Remark; }
-            set { SetProperty(ref _Remark, value); }
-        }
-
         #endregion
 
         #region Default Constructor
 
-        public RealEstate(int id, string linkSelection)
+        public RealEstate(int id, Hyperlink link)
         {
             ID = id;
-            LinkSelection = linkSelection;
+            Link = link;
         }
 
         #endregion

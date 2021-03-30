@@ -2,36 +2,29 @@
 using Indiceringsmodule.Common.DocumentObject;
 using Indiceringsmodule.Common.EventModels;
 using Indiceringsmodule.Common.Extensions;
-using Indiceringsmodule.DataAccess;
 using Indiceringsmodule.Presentation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Indiceringsmodule.WPFViews
 {
     /// <summary>
-    /// Interaction logic for IndiceringsmoduleRoot.xaml
+    /// TODO: Contains a lot of logic. Much of it could be refactored to go into the
+    /// viewmodel and assorted classes instead.
     /// </summary>
     public partial class IndiceringsmoduleView : UserControl
     {
-
         #region Fields & Properties
             
         private protected EventAggregator Ea;
@@ -40,7 +33,7 @@ namespace Indiceringsmodule.WPFViews
         private Dictionary<int, RichTextBox> FactDocumentUIs;
         public RichTextBox CurrentFactRTB;
 
-        #endregion
+        #endregion Fields & Properties
 
         #region Default Constructor
 
@@ -48,11 +41,18 @@ namespace Indiceringsmodule.WPFViews
         {
             Ea = ea;
             InitializeComponent();
-            //DataObject.AddPastingHandler(this, OnPaste);
+            WireUpForm();
+        }
+
+        /// <summary>
+        /// Wires up the assorted parts of the class to a working whole.
+        /// </summary>
+        private void WireUpForm()
+        {
             SetRichTBTextSettings(transcriptionRichTB.Document);
             CurrentFactRTB = CreateNewFactRTB();
-            SetRichTBTextSettings(CurrentFactRTB.Document);            
-            ResetSlider();           
+            SetRichTBTextSettings(CurrentFactRTB.Document);
+            ResetSlider();
 
             Subscriptions.Add(Ea.Subscribe<UpdateViewEventModel>(m => UpdateView(m.Data)));
             Subscriptions.Add(Ea.Subscribe<DocumentLoadedEventModel>(m => LoadedFlowDocumentReceived(m.Data)));
@@ -63,7 +63,7 @@ namespace Indiceringsmodule.WPFViews
             FactDocumentUIs = new Dictionary<int, RichTextBox>();
         }
 
-        #endregion
+        #endregion Default Constructor
 
         #region General Helper Methods
 
@@ -95,7 +95,6 @@ namespace Indiceringsmodule.WPFViews
         /// Block and Paragraph with the new large string in it.
         /// </summary>
         /// <param name="doc"></param>
-        [Obsolete]
         private void PutAllTextInOneBlock(FlowDocument doc)
         {
             if (doc == null) throw new ArgumentNullException("Document cannot be null!");
@@ -126,7 +125,7 @@ namespace Indiceringsmodule.WPFViews
         private void LoadedFlowDocumentReceived(FlowDocument data)
         {
             transcriptionRichTB.Document.Blocks.AddRange(data.Blocks.ToList());
-            PutAllTextInOneBlock(transcriptionRichTB.Document); //no longer needed: using LineBreaks instead of /r/n !
+            PutAllTextInOneBlock(transcriptionRichTB.Document);
             SetRichTBTextSettings(transcriptionRichTB.Document);
         }
 
@@ -200,6 +199,10 @@ namespace Indiceringsmodule.WPFViews
             }
         }
 
+        /// <summary>
+        /// Displays the incoming UserControl in the FactMemberDisplayer on the View.
+        /// </summary>
+        /// <param name="data"></param>
         private void ResolveView(UserControl data)
         {
             FactMemberDisplayer.Content = data;
@@ -225,7 +228,7 @@ namespace Indiceringsmodule.WPFViews
             });
         }
 
-        #endregion
+        #endregion General Helper Methods
 
         #region Methods dealing with Images
 
@@ -279,7 +282,7 @@ namespace Indiceringsmodule.WPFViews
         /// <param name="e"></param>
         private void ImageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var context = this.DataContext as IndiceringsmoduleViewModel;
+            var context = DataContext as IndiceringsmoduleViewModel;
             image.Source = context.SelectedImage;
         }
 
@@ -302,7 +305,7 @@ namespace Indiceringsmodule.WPFViews
             }
         }
 
-        #endregion
+        #endregion Methods dealing with Images
 
         #region Methods dealing with RichTextbox(es)
 
@@ -423,7 +426,7 @@ namespace Indiceringsmodule.WPFViews
             }
         }
 
-        #endregion
+        #endregion Methods dealing with RichTextbox(es)
 
         #region Methods dealing with Fact and FactMember creation
 
@@ -504,8 +507,16 @@ namespace Indiceringsmodule.WPFViews
                     return false;
                 }
 
-                if (selection.Length < 1) throw new ArgumentOutOfRangeException($"*Selection is too short. {selection}");
-                if (selection.Length > 50) throw new ArgumentOutOfRangeException($"*Selection is too long. {selection}");
+                if (selection.Length < 1)
+                {
+                    MessageBox.Show("*Selection is too short.");
+                    return false;
+                }
+                if (selection.Length > 50)
+                {
+                    MessageBox.Show("*Selection is too long.");
+                    return false;
+                }
 
                 if (FactMemberSelector.SelectedItem == null)
                 {
@@ -543,24 +554,26 @@ namespace Indiceringsmodule.WPFViews
                                             currentFactRTB.Document);
         }
 
-        #endregion
-
-
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
+        #endregion Methods dealing with Fact and FactMember creation
 
         #region Temporary and Testing Methods
 
+        /*
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         Below: unused and testing methods. Some code may be handy later.
+         Make sure nothing calls these methods outside of temporary tests.
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        */
+
         /// <summary>
-        /// method for testing purposes
+        /// general method for quick testing, its purpose changes
+        /// with each iteration. Not intended for use on Release.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
-            var selection = CurrentFactRTB.Selection.Text;
+            //var selection = CurrentFactRTB.Selection.Text;
 
             var doc = CurrentFactRTB.Document;
             var para = new Paragraph(new Run("newly added paragraph text!") { FontSize=12 });
@@ -586,97 +599,22 @@ namespace Indiceringsmodule.WPFViews
 
             doc.Blocks.Add(par);
 
-            
-
-
             //var reader = new ServiceReaderJSON();
             //reader.SaveDocument(doc, "invalid");
         }
 
-
         /// <summary>
-        /// Standard logic for a paste action.
+        /// High level method for finding images in a FlowDocument.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnPaste_Default(object sender, DataObjectPastingEventArgs e)
-        {
-            if (e.DataObject.GetDataPresent(typeof(string)))
-            {
-                var text = (string)e.DataObject.GetData(typeof(string));
-                var composition = new TextComposition(InputManager.Current, this, text);
-                TextCompositionManager.StartComposition(composition);
-            }
-            //should the above need to be canceled, use e.CancelCommand
-            //e.CancelCommand();
-        }
-
-        
-
-
-        private void HLink_RequestNavigate(object sender, RequestNavigateEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
-            e.Handled = true;
-        }
-
-        /// <summary>
-        /// method for testing purposes
-        /// </summary>
-        /// <param name="Sender"></param>
-        /// <param name="e"></param>
-        private void SaveRTBContent(object Sender, RoutedEventArgs e)
-        {
-            var range = new TextRange(CurrentFactRTB.Document.ContentStart, CurrentFactRTB.Document.ContentEnd);
-            var path = @"C:\\Users\\ATeeu\\source\\repos\\TextTagger_DeDomijnen\\TextTagger_DeDomijnen\\SavedFiles\\TestSave.xaml";
-            var fStream = new FileStream(path, FileMode.Create);
-
-            range.Save(fStream, DataFormats.XamlPackage);
-            fStream.Close();
-        }
-
-        /// <summary>
-        /// method for testing purposes
-        /// </summary>
-        /// <param name="Sender"></param>
-        /// <param name="e"></param>
-        //private void LoadRTBContent(object Sender, RoutedEventArgs e)
-        //{
-        //    TextRange range;
-        //    FileStream fStream;
-        //    var path = @"C:\\Users\\ATeeu\\source\\repos\\TextTagger_DeDomijnen\\TextTagger_DeDomijnen\\SavedFiles\\TestSave.xaml";
-
-        //    if (File.Exists(path))
-        //    {
-        //        range = new TextRange(factRichTB.Document.ContentStart, factRichTB.Document.ContentEnd);
-        //        fStream = new FileStream(path, FileMode.OpenOrCreate);
-        //        range.Load(fStream, DataFormats.XamlPackage);
-        //        fStream.Close();
-        //    }           
-        //}
-
-        //https://www.youtube.com/watch?v=sHD5j8ZUFBs
-
-        private void HeaveContentButton_Click(object sender, RoutedEventArgs e)
-        {
-            //var loadedDoc = fDocReader.Document;
-            //var editableDoc = richTB.Document;
-
-            //editableDoc.Blocks.AddRange(loadedDoc.Blocks); //throws was edited exception
-
-            //for (int i = 0; i < loadedDoc.Blocks.Count; i++)
-            //{
-            //    editableDoc.Blocks.Add(loadedDoc.Blocks.ElementAt(i));
-            //}
-        }
-
         private void FindImagesButton_Click(object sender, RoutedEventArgs e)
         {
             //var loadedDoc = fDocReader.Document;
             //if (loadedDoc != null)
             //{
             //    var images = FindImages(loadedDoc);
-            //}           
+            //}
         }
 
         /// <summary>
@@ -727,6 +665,6 @@ namespace Indiceringsmodule.WPFViews
             throw new InvalidOperationException("Unknown block type: " + block.GetType());
         }
 
-        #endregion
+        #endregion Temporary and Testing Methods
     }
 }

@@ -13,6 +13,8 @@ namespace Indiceringsmodule.Common.DocumentObject
     {
         #region Fields & Properties
 
+        public readonly EventAggregator Ea;
+
         private protected int _ID;
         public int ID { get { return _ID; } }
 
@@ -48,14 +50,15 @@ namespace Indiceringsmodule.Common.DocumentObject
             set { SetProperty(ref _Chattel, value); }
         }
 
-        #endregion
+        #endregion Fields & Properties
 
         #region Default Constructor
 
-        public Fact(int id, string selection)
+        public Fact(int id, string selection, EventAggregator ea)
         {
             if (id < 0) throw new ArgumentOutOfRangeException($"*ID number cannot be a negative number. {id}");
-            
+
+            Ea = ea;
             _ID = id;
             var fDoc = id + 1;
             FactDocument = new FlowDocument { Name = "Fact_Document_" + fDoc.ToString() };
@@ -90,24 +93,41 @@ namespace Indiceringsmodule.Common.DocumentObject
             FactDocument.Blocks.Add(p);
         }
 
+        /// <summary>
+        /// creates a new Person with a unique ID and adds it to the TotalFactMembers
+        /// </summary>
+        /// <param name="link"></param>
         public void CreatePerson(Hyperlink link)
         {
             var newID = TotalFactMembers.Count();
-            TotalFactMembers.Add(link, new Person(newID, link));
+            TotalFactMembers.Add(link, new Person(newID, link, Ea));
         }
 
+        /// <summary>
+        /// creates a new RealEstate with a unique ID and adds it to the TotalFactMembers
+        /// </summary>
+        /// <param name="link"></param>
         public void CreateRealEstate(Hyperlink link)
         {
             var newID = TotalFactMembers.Count();
-            TotalFactMembers.Add(link, new RealEstate(newID, link));
+            TotalFactMembers.Add(link, new RealEstate(newID, link, Ea));
         }
 
+        /// <summary>
+        /// creates a new Chattel with a unique ID and adds it to the TotalFactMembers
+        /// </summary>
+        /// <param name="link"></param>
         public void CreateChattel(Hyperlink link)
         {
             var newID = TotalFactMembers.Count();
-            TotalFactMembers.Add(link, new Chattel(newID, link));
+            TotalFactMembers.Add(link, new Chattel(newID, link, Ea));
         }
 
+        /// <summary>
+        /// Retrieves a FactMember by using its hyperlink as a key
+        /// </summary>
+        /// <param name="hyperlink"></param>
+        /// <returns></returns>
         public FactMember GetFactMember(Hyperlink hyperlink)
         {
             TotalFactMembers.TryGetValue(hyperlink, out FactMember factMember);
@@ -118,6 +138,10 @@ namespace Indiceringsmodule.Common.DocumentObject
             return factMember;
         }
 
+        /// <summary>
+        /// gets the current total number of FactMembers in the Fact.
+        /// </summary>
+        /// <returns></returns>
         public int GetTotalNumberOfFactMembers()
         {
             return TotalFactMembers.Count();
@@ -135,6 +159,10 @@ namespace Indiceringsmodule.Common.DocumentObject
             return !(link.Inlines.FirstOrDefault() is Run run) ? string.Empty : run.Text;
         }
 
+        /// <summary>
+        /// Validates the data inside the fact and returns these findings.
+        /// </summary>
+        /// <returns></returns>
         public FactValidationFindings Validate()
         {
             var findings = new FactValidationFindings(this);
@@ -188,7 +216,6 @@ namespace Indiceringsmodule.Common.DocumentObject
             }
             return findings;
         }
-
 
         /// <summary>
         /// Scans a FlowDocument and returns all Hyperlinks(s)
@@ -373,6 +400,6 @@ namespace Indiceringsmodule.Common.DocumentObject
             par.Inlines.Add(link);
         }
 
-        #endregion
+        #endregion Methods
     }
 }

@@ -3,19 +3,12 @@ using Indiceringsmodule.Common.DocumentObject;
 using Indiceringsmodule.Common.EventModels;
 using Indiceringsmodule.DataAccess;
 using Indiceringsmodule.Language;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 
@@ -29,7 +22,6 @@ namespace Indiceringsmodule.Presentation
         private readonly FileLoader fileLoader;
         private readonly FileSaver fileSaver;
         private readonly List<Subscription> Subscriptions = new List<Subscription>();
-
 
         //the top-level data structure that holds documents, images, facts, factmembers etc.
         private DocumentObject _DocumentObject;
@@ -116,7 +108,7 @@ namespace Indiceringsmodule.Presentation
             get { return _ImageNameList; }
             set { SetProperty(ref _ImageNameList, value); }
         }
-        #endregion
+        #endregion Fields & Properties
 
         #region Relay Commands
 
@@ -127,7 +119,7 @@ namespace Indiceringsmodule.Presentation
         public RelayCommand Button_SelectPreviousFact { get; private set; }
         public RelayCommand Button_Save { get; private set; }
 
-        #endregion
+        #endregion Relay Commands
 
         #region Default Constructor
 
@@ -139,43 +131,51 @@ namespace Indiceringsmodule.Presentation
             WireUpForm();
         }
 
+
+        /// <summary>
+        /// Wires up all parts of the form
+        /// </summary>
         private void WireUpForm()
         {
-            //Subscriptions.Add(Ea.Subscribe<DocumentLoadedEventModel>(m => DisplayNewCurrentDocument(m.Document))); //Loading file currently breaks due to much refactoring
             Subscriptions.Add(Ea.Subscribe<RequestDocumentForSavingEventModel>(m => MakeDocumentAvailable()));
             Subscriptions.Add(Ea.Subscribe<RequestDocSettingsEventModel>(m => MakeDocSettingsAvailable()));
             Subscriptions.Add(Ea.Subscribe<LoadedKVPairStringBitmapimageEventModel>(m => CompareLoadedImage(m.Data)));
             Subscriptions.Add(Ea.Subscribe<CreateFactEventModel>(m => CreateFact(m.Data)));
             Subscriptions.Add(Ea.Subscribe<SelectedFactChangedEventModel>(m => SelectedFactChanged(m.Data, m.Direction)));
-            //Subscriptions.Add(Ea.Subscribe<SaveCurrentFactDocumentToFact>(m => SetInboundFactDocumentToFact(m.Data))); //no longer needed         
             Subscriptions.Add(Ea.Subscribe<CreateFactMemberEventModel>(m => OnCreateFactMember(m.Data)));
             Subscriptions.Add(Ea.Subscribe<HyperlinkClickedEventModel>(m => OnHyperlinkClicked(m.Data)));     
 
-            //Button_CreateFactMember = new RelayCommand(OnCreateFactMember, CanCreateFactMember); //may no longer be needed? View catches this
             Button_AddImage = new RelayCommand(OnAddImage, CanAddImage);
             Button_RemoveImage = new RelayCommand(OnRemoveImage, CanRemoveImage);
             Button_SelectNextFact = new RelayCommand(OnSelectNextFact, CanSelectNextFact);
             Button_SelectPreviousFact = new RelayCommand(OnSelectPreviousFact, CanSelectPreviousFact);
             Button_Save = new RelayCommand(OnSave, CanSave);
 
-            DocumentObject = new DocumentObject();
+            DocumentObject = new DocumentObject(Ea);
 
-            //TODO - fix hardcoded list content
             FactMembers = new List<string>() { Resources.Person, Resources.RealEstate, Resources.Chattel };
             ImageNameList = new ObservableCollection<string>() { $"<{Resources.NoImageSelected}>" };
             
             SelectedImageName = ImageNameList[0];
         }
 
-        #endregion
+        #endregion Default Constructor
 
         #region General Methods
 
+        /// <summary>
+        /// Returns true by default. If validation logic is needed, place it here.
+        /// </summary>
+        /// <returns></returns>
         private bool CanSave()
         {
             return true;
         }
 
+        /// <summary>
+        /// Validates the DocumentObject and either dispatches the Filesaver,
+        /// or displays what was incorrect.
+        /// </summary>
         private void OnSave()
         {
             var findings = DocumentObject.Validate();
@@ -232,7 +232,6 @@ namespace Indiceringsmodule.Presentation
             MessageBox.Show($"{sb}");
         }
 
-
         /// <summary>
         /// Publishes an event that makes the instance of the Settings class
         /// of the DocumentObject available to the subscriber.
@@ -240,6 +239,15 @@ namespace Indiceringsmodule.Presentation
         private void MakeDocSettingsAvailable()
         {
             Ea.Publish(new PublishDocSettingsEventModel() { Data = DocumentObject.Settings });
+        }
+
+        /// <summary>
+        /// Makes the DocumentObject available to the View so that it can
+        /// add its FlowDocuments to it.
+        /// </summary>
+        private void MakeDocumentAvailable()
+        {
+            Ea.Publish(new RetrieveDocsFromViewEventModel() { Data = DocumentObject });
         }
 
         /// <summary>
@@ -254,7 +262,7 @@ namespace Indiceringsmodule.Presentation
             }
         }
 
-        #endregion
+        #endregion General Methods
 
         #region Methods dealing with Adding / Removing / Displaying (Jpg) Images
 
@@ -367,7 +375,7 @@ namespace Indiceringsmodule.Presentation
             }
         }
 
-        #endregion
+        #endregion Methods dealing with Adding / Removing / Displaying (Jpg) Images
 
         #region Methods dealing Adding / Removing / Selecting Facts and FactMembers
 
@@ -491,27 +499,6 @@ namespace Indiceringsmodule.Presentation
             SelectedFactNumber = id + 1;
         }
 
-        /// <summary>
-        /// Receives a flowDocument and sets it as the 
-        /// selectedFact's FactDocument property.
-        /// </summary>
-        /// <param name="doc"></param>
-        //private void SetInboundFactDocumentToFact(FlowDocument doc)
-        //{
-        //    SelectedFact.FactDocument = doc;
-        //}
-
-        /// <summary>
-        /// Checks whether a new Fact Member can be created.
-        /// Always returns true, may be a place holder for future logic.
-        /// </summary>
-        /// <returns></returns>
-        //private bool CanCreateFactMember()
-        //{
-        //    //validate selection?
-        //    return true;
-        //}
-
         private void OnCreateFactMember(FactMemberCreationData data)
         {
             if (data.ChosenType.Equals(Resources.Person))
@@ -549,30 +536,6 @@ namespace Indiceringsmodule.Presentation
             SelectedFactMember = SelectedFact.GetFactMember(data);
         }
 
-        #endregion
-
-
-
-        /// <summary>
-        /// Makes the DocumentObject available to the View so that it can
-        /// add its FlowDocuments to it.
-        /// </summary>
-        private void MakeDocumentAvailable()
-        {
-            Ea.Publish(new RetrieveDocsFromViewEventModel() { Data = DocumentObject });
-        }
-
-        private IEnumerable<Block> RemoveChildren(Block block)
-        {
-            var list = new List<Block>();
-            if (block is BlockUIContainer)
-            {
-                var b = block as BlockUIContainer;
-                b.Child = null;
-                list.Add(b);
-                return list;
-            }
-            return list;
-        }       
+        #endregion Methods dealing Adding / Removing / Selecting Facts and FactMembers
     }
 }

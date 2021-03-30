@@ -33,33 +33,38 @@ namespace Indiceringsmodule
 
             Path = AppDomain.CurrentDomain.BaseDirectory;
             RootPath = new DirectoryInfo(Path).Parent.Parent.Parent.FullName;
-            LanguagePath = RootPath + @"\Indiceringsmodule.Language";
-            
+            LanguagePath = RootPath + @"\Indiceringsmodule.Language";       
             SetLanguageDictionary();
-            ComposeObjects();
-                        
+            ComposeObjects();           
             Current.MainWindow.Show();
         }
 
+        /// <summary>
+        /// assembles all the high-level pieces to create a working app
+        /// </summary>
         private static void ComposeObjects()
         {
             var rm = new ResourceManager((LanguagePath + @"\Resources"), Assembly.GetExecutingAssembly());
-            //var x = rm.GetString("MenuLoad"); //breaks because Resx file needs to be converted to .Resources
+            //var x = rm.GetString("MenuLoad"); //breaks because Resx file needs to be converted to .Resources (look into this when language selection has to be made dynamic)
             var ea = new EventAggregator();
             var fileLoader = new FileLoader(ea);
             var fileSaver = new FileSaver(ea);
             var menu = new Presentation.Menu(ea, fileLoader, fileSaver);
-            var imtvm = new IndiceringsmoduleViewModel(ea, fileLoader, fileSaver);
-            var imtv = new IndiceringsmoduleView(ea) { DataContext = imtvm };
+            
+            var imvm = new IndiceringsmoduleViewModel(ea, fileLoader, fileSaver);
+            var imv = new IndiceringsmoduleView(ea) { DataContext = imvm };
             
             new ViewModelCoupler(ea);
             var viewModel = new MainWindowViewModel(ea, menu, LangResource)
             {
-                CurrentView = imtv
+                CurrentView = imv
             };
-            Current.MainWindow = new MainWindow(ea, viewModel);
+            Current.MainWindow = new MainWindow(viewModel);
         }
 
+        /// <summary>
+        /// sets the language set based on the current culture.
+        /// </summary>
         private void SetLanguageDictionary()
         {
             var culture = Thread.CurrentThread.CurrentCulture.ToString();

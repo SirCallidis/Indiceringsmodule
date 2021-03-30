@@ -55,7 +55,6 @@
     <Compile Include="FileSaver.cs" />
     <Compile Include="ImagePacket.cs" />
     <Compile Include="ServiceReaderDocx.cs" />
-    <Compile Include="DocxToFlowDocumentConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceReader.cs" />
     <Compile Include="ServiceReaderCSV.cs" />

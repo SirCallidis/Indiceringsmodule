@@ -51,11 +51,19 @@ namespace Indiceringsmodule.Presentation
             }
         }
 
+        /// <summary>
+        /// Returns true by default. If validation logic is require, put it here.
+        /// </summary>
+        /// <returns></returns>
         internal bool CanEditDocSettings()
         {
             return true;
         }
 
+        /// <summary>
+        /// Creates a new VM for editDocSettings and requests a view, then fires a method
+        /// to display it.
+        /// </summary>
         internal void OnEditDocSettings()
         {
             if (CanEditDocSettings())
@@ -67,7 +75,7 @@ namespace Indiceringsmodule.Presentation
 
         }
 
-        #endregion
+        #endregion Command Methods - Menu_LoadFile
 
         #region Command Methods - Menu_SaveFile
 
@@ -93,9 +101,7 @@ namespace Indiceringsmodule.Presentation
             }
         }
 
-        
-
-        #endregion
+        #endregion Command Methods - Menu_SaveFile
 
         #region Command Methods - Menu_CloseProgram
 
@@ -127,8 +133,6 @@ namespace Indiceringsmodule.Presentation
             }
         }
 
-        #endregion
-
-
+        #endregion Command Methods - Menu_CloseProgram
     }
 }

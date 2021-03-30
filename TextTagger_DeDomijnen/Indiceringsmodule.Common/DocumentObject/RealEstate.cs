@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Indiceringsmodule.Common.EventModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,16 +54,19 @@ namespace Indiceringsmodule.Common.DocumentObject
             set { SetProperty(ref _Valuta, value); }
         }
 
-        #endregion
+        #endregion Fields & Properties
 
         #region Default Constructor
 
-        public RealEstate(int id, Hyperlink link)
+        public RealEstate(int id, Hyperlink link, EventAggregator ea)
         {
             ID = id;
             Link = link;
+            Ea = ea;
+            WireUpFactMember();
+            Ea.Publish(new RequestExtraSetsEventModel() { });
         }
 
-        #endregion
+        #endregion Default Constructor
     }
 }

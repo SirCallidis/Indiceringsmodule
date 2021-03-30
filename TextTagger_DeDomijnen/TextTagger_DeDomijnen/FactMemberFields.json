@@ -1,0 +1,20 @@
+[
+  {
+    "Key": "Set1",
+    "Value": [
+      "FirstProp1",
+      "SecondProp1",
+      "ThirdProp1",
+      "FourthProp1"
+    ]
+  },
+  {
+    "Key": "Set2",
+    "Value": [
+      "FirstProp2",
+      "SecondProp2",
+      "ThirdProp2",
+      "FourthProp2"
+    ]
+  }
+]

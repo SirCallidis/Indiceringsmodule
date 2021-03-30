@@ -17,6 +17,8 @@ namespace Indiceringsmodule.Common.DocumentObject
     {
         #region Fields & Properties
 
+        public readonly EventAggregator Ea;
+
         //Contains fields for information related to the external source material
         //of the DocumentObject
         private protected Settings _Settings;
@@ -54,7 +56,7 @@ namespace Indiceringsmodule.Common.DocumentObject
             set { SetProperty(ref _TranscriptionDocument, value); }
         }
 
-        #endregion
+        #endregion Fields & Properties
 
 
         #region Default Constructor
@@ -64,14 +66,15 @@ namespace Indiceringsmodule.Common.DocumentObject
         /// -Settings
         /// -TotalFactsList
         /// </summary>
-        public DocumentObject()
+        public DocumentObject(EventAggregator ea)
         {
+            Ea = ea;
             Settings = new Settings();            
             FactSubGroup = new List<Fact>();
             TotalFacts = new ObservableCollection<Fact>();
             Images = new ObservableDictionary<string, BitmapImage>();
         }
-        #endregion
+        #endregion Default Constructor
 
         #region Methods
 
@@ -83,9 +86,15 @@ namespace Indiceringsmodule.Common.DocumentObject
         public void CreateFact(string selection)
         {
             var newID = TotalFacts.Count();
-            TotalFacts.Add(new Fact(newID, selection));
+            TotalFacts.Add(new Fact(newID, selection, Ea));
         }
 
+        /// <summary>
+        /// Returns true if the DocumentObject contains a fact with a lower ID number,
+        /// or false if it doesn't.
+        /// </summary>
+        /// <param name="givenID"></param>
+        /// <returns></returns>
         public bool IsThereALowerFactID(int givenID)
         {
             var lowestIDnumber = TotalFacts.Min(f => f.ID);
@@ -103,6 +112,12 @@ namespace Indiceringsmodule.Common.DocumentObject
             }
         }
 
+        /// <summary>
+        /// Returns true if the DocumentObject contains a fact with a higher ID number,
+        /// or false if it doesn't.
+        /// </summary>
+        /// <param name="givenID"></param>
+        /// <returns></returns>
         public bool IsThereAHigherFactID(int givenID)
         {
             var highestIDnumber = TotalFacts.Max(f => f.ID);
@@ -120,6 +135,10 @@ namespace Indiceringsmodule.Common.DocumentObject
             }
         }
 
+        /// <summary>
+        /// Validates the data in the DocumentObject and returns a class containing the findings
+        /// </summary>
+        /// <returns></returns>
         public DocumentObjectValidationFindings Validate()
         {
             var docObVal = new DocumentObjectValidationFindings();
@@ -138,8 +157,7 @@ namespace Indiceringsmodule.Common.DocumentObject
             }
             return docObVal;
         }
-        
 
-        #endregion
+        #endregion Methods
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,12 +11,11 @@ namespace Indiceringsmodule.Common
 {
     public class Observable : INotifyPropertyChanged
     {
+        [JsonIgnore]
         public bool ValuesChanged;
 
         //below: empty anonymous method subscribed through delegate, so the subscribers list is never null
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-
 
         //protected and virtual so you could overwrite it in a subclass
 

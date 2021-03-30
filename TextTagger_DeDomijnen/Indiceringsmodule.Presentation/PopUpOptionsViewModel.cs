@@ -29,14 +29,14 @@ namespace Indiceringsmodule.Presentation
             set { SetProperty(ref _Languages, value); }
         }
 
-        #endregion
+        #endregion Fields & Properties
 
         #region RelayCommands
 
         public RelayCommand ClosePopUp { get; private set; }
         public RelayCommand SelectedLanguageChanged { get; private set; }
 
-        #endregion
+        #endregion RelayCommands
 
         #region Default Constructor
 
@@ -46,19 +46,26 @@ namespace Indiceringsmodule.Presentation
             WireUpForm();
         }
 
+        /// <summary>
+        /// Wires up all the parts of the class
+        /// </summary>
         private void WireUpForm()
         {
             ClosePopUp = new RelayCommand(OnClosePopUp, CanClosePopUp);
             SelectedLanguageChanged = new RelayCommand(OnSelectedLanguageChanged, CanSelectedLanguageChanged);
             
-            //TODO language list is momentarily hardcoded
+            //TODO: language list is currently hardcoded
             Languages = new List<string> { "English", "Deutsch", "Nederlands" };
         }
 
-        #endregion
+        #endregion Default Constructor
 
         #region Methods
 
+        /// <summary>
+        /// Validates if the selected language can be changed.
+        /// </summary>
+        /// <returns></returns>
         private bool CanSelectedLanguageChanged()
         {
             if (SelectedLanguage != null)
@@ -68,6 +75,9 @@ namespace Indiceringsmodule.Presentation
             return false;
         }
 
+        /// <summary>
+        /// Publishes an event presenting the selected language
+        /// </summary>
         private void OnSelectedLanguageChanged()
         {
             if (CanSelectedLanguageChanged())
@@ -76,11 +86,18 @@ namespace Indiceringsmodule.Presentation
             }
         }
 
+        /// <summary>
+        /// returns true by default. If additional validation is required, place it here.
+        /// </summary>
+        /// <returns></returns>
         private bool CanClosePopUp()
         {
             return true;
         }
 
+        /// <summary>
+        /// Fires an event to close an active popup.
+        /// </summary>
         private void OnClosePopUp()
         {
             if (CanClosePopUp())
@@ -89,6 +106,6 @@ namespace Indiceringsmodule.Presentation
             }
         }
 
-        #endregion
+        #endregion Methods
     }
 }

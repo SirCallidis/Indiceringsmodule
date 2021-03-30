@@ -21,13 +21,11 @@ namespace Indiceringsmodule.WPFViews
 {
     public partial class MainWindow : Window
     {
-        private readonly EventAggregator Ea;
         private readonly MainWindowViewModel ViewModel;
 
-        public MainWindow(EventAggregator ea, MainWindowViewModel viewModel)
+        public MainWindow(MainWindowViewModel viewModel)
         {
             InitializeComponent();
-            Ea = ea;
             ViewModel = viewModel;
             DataContext = ViewModel;
         }

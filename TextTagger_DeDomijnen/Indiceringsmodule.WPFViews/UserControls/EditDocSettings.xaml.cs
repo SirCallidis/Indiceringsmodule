@@ -21,12 +21,9 @@ namespace Indiceringsmodule.WPFViews.UserControls
     /// </summary>
     public partial class EditDocSettings : UserControl
     {
-        private readonly EventAggregator Ea;
-
-        public EditDocSettings(EventAggregator ea)
+        public EditDocSettings()
         {
             InitializeComponent();
-            Ea = ea;
         }
     }
 }

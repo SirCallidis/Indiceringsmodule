@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -59,6 +62,7 @@
     <Compile Include="EventModels\ClosePopUpEventModel.cs" />
     <Compile Include="EventModels\CreateFactEventModel.cs" />
     <Compile Include="EventModels\CreateFactMemberEventModel.cs" />
+    <Compile Include="EventModels\DisplaySetContentEventModel.cs" />
     <Compile Include="EventModels\DocumentLoadedEventModel.cs" />
     <Compile Include="EventModels\HyperlinkClickedEventModel.cs" />
     <Compile Include="EventModels\LanguageChangedEventModel.cs" />
@@ -72,9 +76,11 @@
     <Compile Include="EventModels\RequestDocSettingsEventModel.cs" />
     <Compile Include="EventModels\RequestDocumentForSavingEventModel.cs" />
     <Compile Include="EventModels\PublishDocumentEventModel.cs" />
+    <Compile Include="EventModels\RequestExtraSetsEventModel.cs" />
     <Compile Include="EventModels\RequestViewForViewModelEventModel.cs" />
     <Compile Include="EventModels\RetrieveDocsFromViewEventModel.cs" />
     <Compile Include="EventModels\SelectedFactChangedEventModel.cs" />
+    <Compile Include="EventModels\SendingExtraSetsEventModel.cs" />
     <Compile Include="EventModels\UpdateViewEventModel.cs" />
     <Compile Include="EventModels\WarningLastHyperlinkCharacterEventModel.cs" />
     <Compile Include="EventRaiser.cs" />
@@ -84,6 +90,7 @@
     <Compile Include="Interfaces\IDocumentReader.cs" />
     <Compile Include="Interfaces\IEventAggregator.cs" />
     <Compile Include="Interfaces\ISubscriber.cs" />
+    <Compile Include="JsonMetaDocOb.cs" />
     <Compile Include="LastHyperlinkCharacterData.cs" />
     <Compile Include="Observable.cs" />
     <Compile Include="ObservableDictionary.cs" />
@@ -98,6 +105,9 @@
       <Project>{5ac1383f-ce3d-44f6-842a-1cf938c32233}</Project>
       <Name>Indiceringsmodule.Language</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

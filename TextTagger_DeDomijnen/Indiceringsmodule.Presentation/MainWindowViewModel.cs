@@ -24,13 +24,6 @@ namespace Indiceringsmodule.Presentation
         private protected Menu Menu;
         private readonly List<Subscription> Subscriptions = new List<Subscription>();
 
-        //private Observable _CurrentViewModel;
-        //public Observable CurrentViewModel
-        //{
-        //    get { return _CurrentViewModel; }
-        //    set { SetProperty(ref _CurrentViewModel, value); }
-        //}
-
         private ResXResourceSet _LangResource;
         public ResXResourceSet LangResource
         {
@@ -67,13 +60,13 @@ namespace Indiceringsmodule.Presentation
         }
 
         private ResourceManager _ReMan;
-        public ResourceManager ReMan //possibly use this as the language/culture variable?
+        public ResourceManager ReMan //possibly use this as the language/culture variable once dynamic language chance needs to be implemented?
         {
             get { return _ReMan; }
             set { SetProperty(ref _ReMan, value); }
         }
 
-        #endregion
+        #endregion Fields & Properties
 
         #region RelayCommands
 
@@ -82,7 +75,8 @@ namespace Indiceringsmodule.Presentation
         public RelayCommand Menu_CloseFile { get; private set; }
         public RelayCommand Menu_OptionsPopUp { get; private set; }
         public RelayCommand Menu_EditDocSettings { get; private set; }
-        #endregion
+
+        #endregion RelayCommands
 
         #region Default Constructor
 
@@ -109,7 +103,9 @@ namespace Indiceringsmodule.Presentation
             Subscriptions.Add(Ea.Subscribe<LanguageChangedEventModel>(m => SetLanguageDictionary(m.Data)));
         }
 
-        #endregion
+        #endregion Default Constructor
+
+        #region Methods
 
         /// <summary>
         /// Placeholder for validation logic.
@@ -121,13 +117,12 @@ namespace Indiceringsmodule.Presentation
             return true;
         }
 
+        /// <summary>
+        /// Creates a new Options ViewModel and requests a View for it.
+        /// (can be New each time since it doesn't hold any data itself)
+        /// </summary>
         private void OnOptionsPopUp()
         {
-            //check if operation is allowed
-            //set PopUpWindow to instance of relevant popup user control
-            //toggle PopUpVisible
-            //enable or disable content based on popupvisibility
-            
             if (CanOptionsPopUp())
             {
                 var popUpOptionsVM = new PopUpOptionsViewModel(Ea);
@@ -135,6 +130,10 @@ namespace Indiceringsmodule.Presentation
             }
         }
 
+        /// <summary>
+        /// Displays the incoming View and checks if other content needs to be disabled
+        /// </summary>
+        /// <param name="data"></param>
         private void ResolveView(object data)
         {
             var view = data as UserControl;
@@ -142,6 +141,9 @@ namespace Indiceringsmodule.Presentation
             ResolvePopUpVisibility();
         }
 
+        /// <summary>
+        /// Sets other content to Enabled or Disabled based on if a PopUp is active.
+        /// </summary>
         private void ResolvePopUpVisibility()
         {
             PopUpVisible ^= true;
@@ -155,10 +157,13 @@ namespace Indiceringsmodule.Presentation
             }
         }
 
+        /// <summary>
+        /// Method used for setting language culture dynamically. Currently commented out / empty!
+        /// (dynamic language change = low priority)
+        /// </summary>
+        /// <param name="selectedLanguage"></param>
         private void SetLanguageDictionary(string selectedLanguage)
         {
-            //TODO: Implement Set Language
-
             ////below: doesn't work
             //var ass = Assembly.GetExecutingAssembly();
             //var rm = new ResourceManager("Indiceringsmodule.Language", Assembly.GetExecutingAssembly());
@@ -187,5 +192,7 @@ namespace Indiceringsmodule.Presentation
             //        break;
             //}
         }
+
+        #endregion Methods
     }
 }

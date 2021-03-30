@@ -12,6 +12,9 @@ using System.Windows.Controls;
 
 namespace Indiceringsmodule
 {
+    /// <summary>
+    /// Class that creates appropriate Views for given ViewModels
+    /// </summary>
     public class ViewModelCoupler
     {
         private protected EventAggregator Ea;
@@ -23,7 +26,13 @@ namespace Indiceringsmodule
             Subscriptions.Add(ea.Subscribe<RequestViewForViewModelEventModel>(m => CreateView(m.Data)));
         }
 
-        private void CreateView(object input)
+        /// <summary>
+        /// Creates a new view for the incoming input and sets this as its
+        /// datacontext, then presenting the coupled View to the rest of the app
+        /// through an event.
+        /// </summary>
+        /// <param name="input"></param>
+        private void CreateView(Observable input)
         {
             var type = input.GetType();
 
@@ -34,19 +43,19 @@ namespace Indiceringsmodule
                     Ea.Publish(new ProvidingViewForViewModelEventModel() { Data = popUpOptionsView });
                     break;
                 case "EditDocSettingsViewModel":
-                    var editDocSettingsView = new EditDocSettings(Ea) { DataContext = input };
+                    var editDocSettingsView = new EditDocSettings() { DataContext = input };
                     Ea.Publish(new ProvidingViewForViewModelEventModel() { Data = editDocSettingsView });
                     break;
                 case "Person":
-                    var editPersonView = new EditPersonFactMember { DataContext = input };
+                    var editPersonView = new EditPersonFactMember(Ea) { DataContext = input };
                     Ea.Publish(new ProvidingViewForFactMemberEventModel() { Data = editPersonView });
                     break;
                 case "RealEstate":
-                    var editRealEstateView = new EditRealEstateFactMember { DataContext = input };
+                    var editRealEstateView = new EditRealEstateFactMember(Ea) { DataContext = input };
                     Ea.Publish(new ProvidingViewForFactMemberEventModel() { Data = editRealEstateView });
                     break;
                 case "Chattel":
-                    var editChattelView = new EditChattelFactMember() { DataContext = input };
+                    var editChattelView = new EditChattelFactMember(Ea) { DataContext = input };
                     Ea.Publish(new ProvidingViewForFactMemberEventModel() { Data = editChattelView });
                     break;
                 default:

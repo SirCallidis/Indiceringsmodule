@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Indiceringsmodule.Common.EventModels;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -54,20 +55,27 @@ namespace Indiceringsmodule.Common.DocumentObject
             set { SetProperty(ref _DesignationOrTitle, value); }
         }
 
-        #endregion
+        #endregion Fields & Properties
 
         #region Default Constructor
 
-        public Person(int id, Hyperlink link)
+        public Person(int id, Hyperlink link, EventAggregator ea)
         {
             ID = id;
             Link = link;
+            Ea = ea;
+            WireUpFactMember();
+            Ea.Publish(new RequestExtraSetsEventModel() { });
         }
 
-        #endregion
+        #endregion Default Constructor
 
         #region Methods
 
+        /// <summary>
+        /// returns the concatonated full name of the person
+        /// </summary>
+        /// <returns></returns>
         public string FullName()
         {
             if (AdditionalNames == null && Particle == null)
@@ -88,6 +96,6 @@ namespace Indiceringsmodule.Common.DocumentObject
             }  
         }
 
-        #endregion
+        #endregion Methods
     }
 }

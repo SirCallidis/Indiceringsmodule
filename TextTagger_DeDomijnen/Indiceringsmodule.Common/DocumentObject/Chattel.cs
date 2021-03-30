@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Indiceringsmodule.Common.EventModels;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using System.Windows.Media.Animation;
 
 namespace Indiceringsmodule.Common.DocumentObject
 {
@@ -38,10 +40,13 @@ namespace Indiceringsmodule.Common.DocumentObject
 
         #region Default Constructor
 
-        public Chattel(int id, Hyperlink link)
+        public Chattel(int id, Hyperlink link, EventAggregator ea)
         {
             ID = id;
             Link = link;
+            Ea = ea;
+            WireUpFactMember();
+            Ea.Publish(new RequestExtraSetsEventModel() { });
         }
 
         #endregion

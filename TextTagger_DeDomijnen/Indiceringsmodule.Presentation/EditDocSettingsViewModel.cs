@@ -43,6 +43,10 @@ namespace Indiceringsmodule.Presentation
 
         #region Methods
 
+        /// <summary>
+        /// Returns true by default. If validation logic is needed, place it here.
+        /// </summary>
+        /// <returns></returns>
         private bool CanClosePopUp()
         {
             return true;

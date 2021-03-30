@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Indiceringsmodule.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,14 +16,14 @@ using System.Windows.Shapes;
 
 namespace Indiceringsmodule.WPFViews.UserControls
 {
-    /// <summary>
-    /// Interaction logic for EditPersonFactMember.xaml
-    /// </summary>
     public partial class EditPersonFactMember : UserControl
     {
-        public EditPersonFactMember()
+        private EventAggregator Ea;
+
+        public EditPersonFactMember(EventAggregator ea)
         {
             InitializeComponent();
+            Ea = ea;
         }
     }
 }

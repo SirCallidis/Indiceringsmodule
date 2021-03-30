@@ -66,8 +66,7 @@ namespace Indiceringsmodule.Common.DocumentObject
             set { SetProperty(ref _FactSubType, value); }
         }
 
-
-        #endregion
+        #endregion Fields & Properties
 
         #region Default Constuctor
 
@@ -75,10 +74,6 @@ namespace Indiceringsmodule.Common.DocumentObject
         {
         }
 
-        #endregion
-
-
-
-
+        #endregion Default Constuctor
     }
 }
